@@ -1,0 +1,194 @@
+14:13:41 [INFO    ] dashboard_server — ============================================================
+14:13:41 [INFO    ] dashboard_server —   Software Aging Dashboard Server
+14:13:41 [INFO    ] dashboard_server — ============================================================
+14:13:41 [INFO    ] database.db_manager — Database initialised at C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\aging.db
+14:13:41 [INFO    ] dashboard_server — Warm-up: waiting 2s before first analysis…
+14:13:43 [INFO    ] dashboard_server — Analysis loop started — running every 5 seconds.
+14:13:43 [INFO    ] dashboard_server — Launching dashboard…
+14:13:43 [INFO    ] dashboard.app — Dashboard starting at http://127.0.0.1:5000
+14:13:43 [INFO    ] werkzeug — [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+14:13:43 [INFO    ] werkzeug — [33mPress CTRL+C to quit[0m
+14:13:44 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:44] "GET / HTTP/1.1" 200 -
+14:13:44 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:44] "[36mGET /static/js/icons.js HTTP/1.1[0m" 304 -
+14:13:44 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:44] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+14:13:44 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:44] "[36mGET /static/js/charts.js HTTP/1.1[0m" 304 -
+14:13:44 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:44] "[36mGET /static/js/animations.js HTTP/1.1[0m" 304 -
+14:13:46 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:46] "GET /api/system-metrics HTTP/1.1" 200 -
+14:13:46 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:46] "GET /api/current-status HTTP/1.1" 200 -
+14:13:48 [INFO    ] dashboard_server — ── Analysis cycle start ──────────────────────────
+14:13:48 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:48] "GET /settings HTTP/1.1" 200 -
+14:13:48 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:48] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+14:13:48 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:48] "[36mGET /static/js/icons.js HTTP/1.1[0m" 304 -
+14:13:48 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:48] "[36mGET /static/js/animations.js HTTP/1.1[0m" 304 -
+14:13:48 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:48] "[36mGET /static/js/charts.js HTTP/1.1[0m" 304 -
+14:13:49 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:49] "GET /api/notifications/settings HTTP/1.1" 200 -
+14:13:49 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:49] "GET /api/notifications/history?limit=20 HTTP/1.1" 200 -
+14:13:49 [INFO    ] core.predictor — Prediction: P(60min)=0.01% priority=NORMAL crash_in=1386294.4 min
+14:13:49 [INFO    ] core.prevention — Prevention engine: 0 recommendation(s) generated.
+14:13:49 [INFO    ] dashboard_server — ── Analysis cycle complete ───────────────────────
+14:13:54 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:54] "GET / HTTP/1.1" 200 -
+14:13:54 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:54] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+14:13:54 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:54] "[36mGET /static/js/icons.js HTTP/1.1[0m" 304 -
+14:13:54 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:54] "[36mGET /static/js/animations.js HTTP/1.1[0m" 304 -
+14:13:54 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:54] "[36mGET /static/js/charts.js HTTP/1.1[0m" 304 -
+14:13:54 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:54] "GET /api/system-metrics HTTP/1.1" 200 -
+14:13:54 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:13:54] "GET /api/current-status HTTP/1.1" 200 -
+14:13:54 [INFO    ] dashboard_server — ── Analysis cycle start ──────────────────────────
+14:13:55 [INFO    ] core.predictor — Prediction: P(60min)=0.01% priority=NORMAL crash_in=1386294.4 min
+14:13:55 [INFO    ] core.prevention — Prevention engine: 0 recommendation(s) generated.
+14:13:55 [INFO    ] dashboard_server — ── Analysis cycle complete ───────────────────────
+14:14:00 [INFO    ] dashboard_server — ── Analysis cycle start ──────────────────────────
+14:14:01 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:01] "GET /settings HTTP/1.1" 200 -
+14:14:01 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:01] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+14:14:01 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:01] "[36mGET /static/js/icons.js HTTP/1.1[0m" 304 -
+14:14:01 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:01] "[36mGET /static/js/animations.js HTTP/1.1[0m" 304 -
+14:14:01 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:01] "[36mGET /static/js/charts.js HTTP/1.1[0m" 304 -
+14:14:02 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:02] "GET /api/notifications/settings HTTP/1.1" 200 -
+14:14:02 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:02] "GET /api/notifications/history?limit=20 HTTP/1.1" 200 -
+14:14:02 [INFO    ] core.predictor — Prediction: P(60min)=48.71% priority=MEDIUM crash_in=124.6 min
+14:14:02 [INFO    ] core.prevention — Prevention engine: 1 recommendation(s) generated.
+14:14:02 [INFO    ] dashboard_server — ── Analysis cycle complete ───────────────────────
+14:14:07 [INFO    ] dashboard_server — ── Analysis cycle start ──────────────────────────
+14:14:08 [INFO    ] core.predictor — Prediction: P(60min)=32.69% priority=LOW crash_in=210.1 min
+14:14:08 [INFO    ] core.prevention — Prevention engine: 1 recommendation(s) generated.
+14:14:08 [INFO    ] dashboard_server — ── Analysis cycle complete ───────────────────────
+14:14:11 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:11] "GET /api/pending-actions HTTP/1.1" 200 -
+14:14:11 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:11] "GET /api/notifications/history?limit=10 HTTP/1.1" 200 -
+14:14:13 [INFO    ] dashboard_server — ── Analysis cycle start ──────────────────────────
+14:14:15 [INFO    ] core.predictor — Prediction: P(60min)=19.03% priority=LOW crash_in=393.9 min
+14:14:15 [INFO    ] core.prevention — Prevention engine: 1 recommendation(s) generated.
+14:14:15 [INFO    ] dashboard_server — ── Analysis cycle complete ───────────────────────
+14:14:20 [INFO    ] dashboard_server — ── Analysis cycle start ──────────────────────────
+14:14:21 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:21] "GET /api/pending-actions HTTP/1.1" 200 -
+14:14:21 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:21] "GET /api/notifications/history?limit=10 HTTP/1.1" 200 -
+14:14:22 [INFO    ] core.predictor — Prediction: P(60min)=13.23% priority=NORMAL crash_in=586.3 min
+14:14:22 [INFO    ] core.prevention — Prevention engine: 0 recommendation(s) generated.
+14:14:22 [INFO    ] dashboard_server — ── Analysis cycle complete ───────────────────────
+14:14:27 [INFO    ] dashboard_server — ── Analysis cycle start ──────────────────────────
+14:14:29 [INFO    ] core.predictor — Prediction: P(60min)=8.66% priority=NORMAL crash_in=917.7 min
+14:14:29 [INFO    ] core.prevention — Prevention engine: 0 recommendation(s) generated.
+14:14:29 [INFO    ] dashboard_server — ── Analysis cycle complete ───────────────────────
+14:14:31 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:31] "GET /api/pending-actions HTTP/1.1" 200 -
+14:14:31 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:31] "GET /api/notifications/history?limit=10 HTTP/1.1" 200 -
+14:14:32 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:32] "POST /api/notifications/settings HTTP/1.1" 200 -
+14:14:34 [INFO    ] dashboard_server — ── Analysis cycle start ──────────────────────────
+14:14:35 [INFO    ] core.predictor — Prediction: P(60min)=0.01% priority=NORMAL crash_in=1386294.4 min
+14:14:35 [INFO    ] core.prevention — Prevention engine: 0 recommendation(s) generated.
+14:14:35 [INFO    ] dashboard_server — ── Analysis cycle complete ───────────────────────
+14:14:36 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:36] "GET /recommendations HTTP/1.1" 200 -
+14:14:36 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:36] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+14:14:36 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:36] "[36mGET /static/js/icons.js HTTP/1.1[0m" 304 -
+14:14:37 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:37] "[36mGET /static/js/charts.js HTTP/1.1[0m" 304 -
+14:14:37 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:37] "[36mGET /static/js/animations.js HTTP/1.1[0m" 304 -
+14:14:37 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:37] "GET /api/recommendations HTTP/1.1" 200 -
+14:14:40 [INFO    ] dashboard_server — ── Analysis cycle start ──────────────────────────
+14:14:43 [INFO    ] core.predictor — Prediction: P(60min)=0.01% priority=NORMAL crash_in=1386294.4 min
+14:14:43 [INFO    ] core.prevention — Prevention engine: 0 recommendation(s) generated.
+14:14:43 [INFO    ] dashboard_server — ── Analysis cycle complete ───────────────────────
+14:14:44 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:44] "GET /settings HTTP/1.1" 200 -
+14:14:44 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:44] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+14:14:44 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:44] "[36mGET /static/js/icons.js HTTP/1.1[0m" 304 -
+14:14:44 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:44] "[36mGET /static/js/animations.js HTTP/1.1[0m" 304 -
+14:14:44 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:44] "[36mGET /static/js/charts.js HTTP/1.1[0m" 304 -
+14:14:45 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:45] "GET /api/notifications/settings HTTP/1.1" 200 -
+14:14:45 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:45] "GET /api/notifications/history?limit=20 HTTP/1.1" 200 -
+14:14:48 [INFO    ] dashboard_server — ── Analysis cycle start ──────────────────────────
+14:14:49 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:49] "POST /api/notifications/settings HTTP/1.1" 200 -
+14:14:49 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:49] "POST /api/notifications/settings HTTP/1.1" 200 -
+14:14:51 [INFO    ] core.root_cause — Root-cause run: 2 cause(s) found
+14:14:51 [INFO    ] core.predictor — Prediction: P(60min)=8.28% priority=NORMAL crash_in=962.0 min
+14:14:52 [INFO    ] core.prevention — Prevention engine: 6 recommendation(s) generated.
+14:14:52 [INFO    ] core.remediation — Remediation executing: kill on target=w3wp.exe pid=11932
+14:14:52 [INFO    ] core.remediation — Remediation executing: limit_cpu on target=ctfmon.exe pid=8116
+14:14:52 [INFO    ] core.remediation — Remediation executing: limit_cpu on target=w3wp.exe pid=11932
+14:14:52 [INFO    ] dashboard_server — ── Analysis cycle complete ───────────────────────
+14:14:54 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:54] "GET / HTTP/1.1" 200 -
+14:14:54 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:54] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+14:14:54 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:54] "[36mGET /static/js/icons.js HTTP/1.1[0m" 304 -
+14:14:54 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:54] "[36mGET /static/js/animations.js HTTP/1.1[0m" 304 -
+14:14:54 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:54] "[36mGET /static/js/charts.js HTTP/1.1[0m" 304 -
+14:14:55 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:55] "GET /api/system-metrics HTTP/1.1" 200 -
+14:14:55 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:55] "GET /api/current-status HTTP/1.1" 200 -
+14:14:57 [INFO    ] dashboard_server — ── Analysis cycle start ──────────────────────────
+14:14:57 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:57] "GET /processes HTTP/1.1" 200 -
+14:14:58 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:58] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+14:14:58 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:58] "[36mGET /static/js/icons.js HTTP/1.1[0m" 304 -
+14:14:58 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:58] "[36mGET /static/js/animations.js HTTP/1.1[0m" 304 -
+14:14:58 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:58] "[36mGET /static/js/charts.js HTTP/1.1[0m" 304 -
+14:14:58 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:14:58] "GET /api/process-metrics HTTP/1.1" 200 -
+14:14:59 [INFO    ] core.root_cause — Root-cause run: 4 cause(s) found
+14:14:59 [INFO    ] core.predictor — Prediction: P(60min)=6.08% priority=NORMAL crash_in=1326.5 min
+14:15:00 [INFO    ] core.prevention — Prevention engine: 12 recommendation(s) generated.
+14:15:00 [INFO    ] core.remediation — Remediation executing: kill on target=audiodg.exe pid=18152
+14:15:00 [INFO    ] core.remediation — Remediation executing: limit_cpu on target=OfficeClickToRun.exe pid=4336
+14:15:00 [INFO    ] dashboard_server — ── Analysis cycle complete ───────────────────────
+14:15:02 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:02] "GET /root-cause HTTP/1.1" 200 -
+14:15:03 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:03] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+14:15:03 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:03] "[36mGET /static/js/icons.js HTTP/1.1[0m" 304 -
+14:15:03 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:03] "[36mGET /static/js/animations.js HTTP/1.1[0m" 304 -
+14:15:03 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:03] "[36mGET /static/js/charts.js HTTP/1.1[0m" 304 -
+14:15:03 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:03] "GET /api/root-causes HTTP/1.1" 200 -
+14:15:05 [INFO    ] dashboard_server — ── Analysis cycle start ──────────────────────────
+14:15:07 [INFO    ] core.root_cause — Root-cause run: 3 cause(s) found
+14:15:07 [INFO    ] core.predictor — Prediction: P(60min)=14.12% priority=NORMAL crash_in=546.4 min
+14:15:08 [INFO    ] core.prevention — Prevention engine: 12 recommendation(s) generated.
+14:15:08 [INFO    ] core.remediation — Remediation executing: kill on target=ctfmon.exe pid=8116
+14:15:08 [INFO    ] core.remediation — Remediation executing: limit_cpu on target=audiodg.exe pid=18152
+14:15:08 [INFO    ] dashboard_server — ── Analysis cycle complete ───────────────────────
+14:15:13 [INFO    ] dashboard_server — ── Analysis cycle start ──────────────────────────
+14:15:13 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:13] "GET /api/pending-actions HTTP/1.1" 200 -
+14:15:13 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:13] "GET /api/notifications/history?limit=10 HTTP/1.1" 200 -
+14:15:14 [INFO    ] core.root_cause — Root-cause run: 2 cause(s) found
+14:15:14 [INFO    ] core.predictor — Prediction: P(60min)=16.31% priority=LOW crash_in=467.3 min
+14:15:15 [INFO    ] core.prevention — Prevention engine: 13 recommendation(s) generated.
+14:15:15 [INFO    ] core.remediation — Remediation executing: limit_cpu on target=ctfmon.exe pid=15180
+14:15:15 [INFO    ] dashboard_server — ── Analysis cycle complete ───────────────────────
+14:15:18 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:18] "GET /api/root-causes HTTP/1.1" 200 -
+14:15:20 [INFO    ] dashboard_server — ── Analysis cycle start ──────────────────────────
+14:15:21 [INFO    ] core.root_cause — Root-cause run: 3 cause(s) found
+14:15:21 [INFO    ] core.predictor — Prediction: P(60min)=15.48% priority=LOW crash_in=494.7 min
+14:15:22 [INFO    ] core.prevention — Prevention engine: 19 recommendation(s) generated.
+14:15:22 [INFO    ] core.remediation — Remediation executing: kill on target=ShellHost.exe pid=8948
+14:15:22 [INFO    ] dashboard_server — ── Analysis cycle complete ───────────────────────
+14:15:23 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:23] "GET /api/pending-actions HTTP/1.1" 200 -
+14:15:23 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:23] "GET /api/notifications/history?limit=10 HTTP/1.1" 200 -
+14:15:27 [INFO    ] dashboard_server — ── Analysis cycle start ──────────────────────────
+14:15:28 [INFO    ] core.root_cause — Root-cause run: 3 cause(s) found
+14:15:28 [INFO    ] core.predictor — Prediction: P(60min)=13.13% priority=NORMAL crash_in=590.8 min
+14:15:28 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:28] "GET /api/root-causes HTTP/1.1" 200 -
+14:15:29 [INFO    ] core.prevention — Prevention engine: 18 recommendation(s) generated.
+14:15:29 [INFO    ] core.remediation — Remediation executing: kill on target=OfficeClickToRun.exe pid=4336
+14:15:29 [INFO    ] dashboard_server — ── Analysis cycle complete ───────────────────────
+14:15:32 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:32] "GET /api/root-causes HTTP/1.1" 200 -
+14:15:33 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:33] "GET /api/pending-actions HTTP/1.1" 200 -
+14:15:33 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:33] "GET /api/notifications/history?limit=10 HTTP/1.1" 200 -
+14:15:34 [INFO    ] dashboard_server — ── Analysis cycle start ──────────────────────────
+14:15:34 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:34] "GET /api/root-causes HTTP/1.1" 200 -
+14:15:35 [INFO    ] core.root_cause — Root-cause run: 3 cause(s) found
+14:15:35 [INFO    ] core.predictor — Prediction: P(60min)=7.49% priority=NORMAL crash_in=1068.8 min
+14:15:35 [INFO    ] core.prevention — Prevention engine: 15 recommendation(s) generated.
+14:15:35 [INFO    ] core.remediation — Remediation executing: limit_cpu on target=ShellHost.exe pid=3744
+14:15:35 [INFO    ] dashboard_server — ── Analysis cycle complete ───────────────────────
+14:15:40 [INFO    ] dashboard_server — ── Analysis cycle start ──────────────────────────
+14:15:42 [INFO    ] core.root_cause — Root-cause run: 3 cause(s) found
+14:15:42 [INFO    ] core.predictor — Prediction: P(60min)=4.65% priority=NORMAL crash_in=1745.5 min
+14:15:42 [INFO    ] core.prevention — Prevention engine: 15 recommendation(s) generated.
+14:15:42 [INFO    ] core.remediation — Remediation executing: kill on target=ctfmon.exe pid=15180
+14:15:42 [INFO    ] core.remediation — Remediation executing: limit_cpu on target=WmiPrvSE.exe pid=4020
+14:15:42 [INFO    ] dashboard_server — ── Analysis cycle complete ───────────────────────
+14:15:43 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:43] "GET /api/pending-actions HTTP/1.1" 200 -
+14:15:43 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:43] "GET /api/notifications/history?limit=10 HTTP/1.1" 200 -
+14:15:44 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:44] "GET /settings HTTP/1.1" 200 -
+14:15:44 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:44] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+14:15:44 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:44] "[36mGET /static/js/icons.js HTTP/1.1[0m" 304 -
+14:15:44 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:44] "[36mGET /static/js/animations.js HTTP/1.1[0m" 304 -
+14:15:44 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:44] "[36mGET /static/js/charts.js HTTP/1.1[0m" 304 -
+14:15:45 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:45] "GET /api/notifications/settings HTTP/1.1" 200 -
+14:15:45 [INFO    ] werkzeug — 127.0.0.1 - - [15/Apr/2026 14:15:45] "GET /api/notifications/history?limit=20 HTTP/1.1" 200 -
+14:15:47 [INFO    ] dashboard_server — ── Analysis cycle start ──────────────────────────
+14:15:49 [INFO    ] core.root_cause — Root-cause run: 2 cause(s) found
+14:15:49 [INFO    ] core.predictor — Prediction: P(60min)=0.01% priority=NORMAL crash_in=1386294.4 min
+14:15:49 [INFO    ] core.prevention — Prevention engine: 12 recommendation(s) generated.
+14:15:49 [INFO    ] core.remediation — Remediation executing: kill on target=ctfmon.exe pid=3792
+14:15:49 [INFO    ] dashboard_server — ── Analysis cycle complete ───────────────────────

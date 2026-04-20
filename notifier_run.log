@@ -1,0 +1,9 @@
+13:14:57 [INFO    ] database.db_manager — Database initialised at C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\aging.db
+13:14:57 [INFO    ] notifier_service — Notifier service running. Polling every 10s.
+13:16:39 [INFO    ] core.notifier — Notifier: 1 notification(s) sent.
+13:16:39 [INFO    ] notifier_service — Sent 1 notification(s) this cycle.
+13:17:10 [INFO    ] core.notifier — Notifier: 2 notification(s) sent.
+13:17:10 [INFO    ] notifier_service — Sent 2 notification(s) this cycle.
+13:18:31 [INFO    ] core.notifier — Notifier: 2 notification(s) sent.
+13:18:31 [INFO    ] notifier_service — Sent 2 notification(s) this cycle.
+13:25:39 [INFO    ] notifier_service — Shutdown signal received (2). Stopping…

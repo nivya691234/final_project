@@ -1,0 +1,62 @@
+{
+  "timestamp": "2026-04-15T13:27:34.004175",
+  "tests": {
+    "Database Initialization": {
+      "status": "FAIL",
+      "details": "'DatabaseManager' object has no attribute 'get_tables'",
+      "timestamp": "2026-04-15T13:27:34.004175"
+    },
+    "Data Collection": {
+      "status": "FAIL",
+      "details": "DataCollector.__init__() got an unexpected keyword argument 'interval_s'",
+      "timestamp": "2026-04-15T13:27:35.013132"
+    },
+    "Trend Analyzer": {
+      "status": "FAIL",
+      "details": "'TrendAnalyzer' object has no attribute 'detect_trends'",
+      "timestamp": "2026-04-15T13:27:36.016827"
+    },
+    "Root Cause Engine": {
+      "status": "PASS",
+      "details": "0 causes",
+      "timestamp": "2026-04-15T13:27:37.107611"
+    },
+    "Failure Predictor": {
+      "status": "FAIL",
+      "details": "'str' object has no attribute 'get'",
+      "timestamp": "2026-04-15T13:27:38.149018"
+    },
+    "Prevention Engine": {
+      "status": "PASS",
+      "details": "9 actions",
+      "timestamp": "2026-04-15T13:27:39.365907"
+    },
+    "Action Policy Engine": {
+      "status": "PASS",
+      "details": "1 decisions",
+      "timestamp": "2026-04-15T13:27:40.488205"
+    },
+    "Alert Engine": {
+      "status": "PASS",
+      "details": "[{'category': 'root_cause', 'target': 'dwm.exe', 'severity': 'MEDIUM'}, {'category': 'recommendation', 'target': 'system', 'severity': 'HIGH'}] alerts sent",
+      "timestamp": "2026-04-15T13:28:01.691066"
+    },
+    "Dashboard API": {
+      "status": "FAIL",
+      "details": "cannot import name 'create_app' from 'dashboard.app' (C:\\Users\\acer\\Downloads\\softwareaginganalyser\\softwareaginganalyser\\dashboard\\app.py)",
+      "timestamp": "2026-04-15T13:28:03.128440"
+    },
+    "End-to-End Pipeline": {
+      "status": "PASS",
+      "details": "14 items",
+      "timestamp": "2026-04-15T13:28:04.558694"
+    }
+  },
+  "errors": [
+    "'DatabaseManager' object has no attribute 'get_tables'",
+    "DataCollector.__init__() got an unexpected keyword argument 'interval_s'",
+    "'TrendAnalyzer' object has no attribute 'detect_trends'",
+    "'str' object has no attribute 'get'",
+    "cannot import name 'create_app' from 'dashboard.app' (C:\\Users\\acer\\Downloads\\softwareaginganalyser\\softwareaginganalyser\\dashboard\\app.py)"
+  ]
+}

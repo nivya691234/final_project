@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% block title %}Settings — Software Aging Analyzer{% endblock %}
+{% block page_title %}Notification Settings{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+  <div class="settings-section">
+    <h2>Notification Preferences</h2>
+    <p>Control when and how you receive alerts about system aging issues.</p>
+
+    <form id="notification-form" class="settings-form">
+      <div class="form-group">
+        <label class="form-label">
+          <input type="checkbox" id="enabled" />
+          Enable Notifications
+        </label>
+        <p class="form-help">Turn desktop toasts on or off completely.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="cooldown">Cooldown Period (seconds)</label>
+        <input type="number" id="cooldown" min="60" max="3600" step="60" />
+        <p class="form-help">Minimum time between identical alerts (default: 600s = 10 minutes).</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="min-severity">Minimum Severity</label>
+        <select id="min-severity">
+          <option value="LOW">Low (all alerts)</option>
+          <option value="MEDIUM">Medium (filter low noise)</option>
+          <option value="HIGH">High (only serious issues)</option>
+          <option value="CRITICAL">Critical (only emergencies)</option>
+        </select>
+        <p class="form-help">Only show alerts at or above this severity level.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Alert Types</label>
+        <div class="checkbox-group">
+          <label><input type="checkbox" id="alert-root-cause" /> Root Cause Detection</label>
+          <label><input type="checkbox" id="alert-prediction" /> Failure Predictions</label>
+          <label><input type="checkbox" id="alert-recommendation" /> Action Recommendations</label>
+          <label><input type="checkbox" id="alert-degradation" /> System Degradation</label>
+          <label><input type="checkbox" id="alert-health" /> Health Summaries</label>
+        </div>
+        <p class="form-help">Choose which types of alerts to receive.</p>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save Settings</button>
+        <button type="button" id="reset-btn" class="btn btn-secondary">Reset to Defaults</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="settings-section">
+    <h2>Notification History</h2>
+    <p>Recent alerts and their status.</p>
+    <div id="notification-history" class="history-list">
+      <div class="loading">Loading...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  loadSettings();
+  loadHistory();
+
+  document.getElementById('notification-form').addEventListener('submit', saveSettings);
+  document.getElementById('reset-btn').addEventListener('click', resetSettings);
+});
+
+function loadSettings() {
+  fetch('/api/notifications/settings')
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById('enabled').checked = data.enabled;
+      document.getElementById('cooldown').value = data.cooldown_sec;
+      document.getElementById('min-severity').value = data.min_severity;
+      document.getElementById('alert-root-cause').checked = data.alert_types.root_cause;
+      document.getElementById('alert-prediction').checked = data.alert_types.prediction;
+      document.getElementById('alert-recommendation').checked = data.alert_types.recommendation;
+      document.getElementById('alert-degradation').checked = data.alert_types.degradation;
+      document.getElementById('alert-health').checked = data.alert_types.health_summary;
+    })
+    .catch(err => console.error('Failed to load settings:', err));
+}
+
+function saveSettings(e) {
+  e.preventDefault();
+  const data = {
+    enabled: document.getElementById('enabled').checked,
+    cooldown_sec: parseInt(document.getElementById('cooldown').value),
+    min_severity: document.getElementById('min-severity').value,
+    alert_types: {
+      root_cause: document.getElementById('alert-root-cause').checked,
+      prediction: document.getElementById('alert-prediction').checked,
+      recommendation: document.getElementById('alert-recommendation').checked,
+      degradation: document.getElementById('alert-degradation').checked,
+      health_summary: document.getElementById('alert-health').checked,
+    }
+  };
+
+  fetch('/api/notifications/settings', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  })
+  .then(r => r.json())
+  .then(result => {
+    if (result.success) {
+      alert('Settings saved successfully!');
+    } else {
+      alert('Failed to save settings.');
+    }
+  })
+  .catch(err => console.error('Save failed:', err));
+}
+
+function resetSettings() {
+  if (confirm('Reset to default settings?')) {
+    fetch('/api/notifications/settings', { method: 'DELETE' })
+      .then(() => loadSettings())
+      .catch(err => console.error('Reset failed:', err));
+  }
+}
+
+function loadHistory() {
+  fetch('/api/notifications/history?limit=20')
+    .then(r => r.json())
+    .then(data => {
+      const container = document.getElementById('notification-history');
+      if (data.notifications.length === 0) {
+        container.innerHTML = '<div class="no-data">No notifications yet.</div>';
+        return;
+      }
+      container.innerHTML = data.notifications.map(n => `
+        <div class="history-item">
+          <div class="history-header">
+            <span class="history-severity severity-${n.severity.toLowerCase()}">${n.severity}</span>
+            <span class="history-category">${n.category}</span>
+            <span class="history-time">${n.ts_human}</span>
+          </div>
+          <div class="history-title">${n.title}</div>
+          <div class="history-body">${n.body}</div>
+        </div>
+      `).join('');
+    })
+    .catch(err => {
+      document.getElementById('notification-history').innerHTML = '<div class="error">Failed to load history.</div>';
+      console.error('History load failed:', err);
+    });
+}
+</script>
+
+<style>
+.settings-container { max-width: 800px; margin: 0 auto; padding: 20px; }
+.settings-section { margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-card); border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border); }
+.settings-section h2 { margin-top: 0; color: var(--text-primary); font-weight: 600; }
+.settings-form { display: flex; flex-direction: column; gap: 1.5rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+.form-label { font-weight: 500; color: var(--text-secondary); }
+.form-help { font-size: 0.9em; color: var(--text-muted); margin: 0; }
+.checkbox-group { display: flex; flex-direction: column; gap: 0.5rem; }
+.checkbox-group label { display: flex; align-items: center; gap: 0.5rem; color: var(--text-primary); }
+.checkbox-group input[type="checkbox"] { accent-color: var(--accent-blue); }
+.form-actions { display: flex; gap: 1rem; margin-top: 1rem; }
+.btn { padding: 0.75rem 1.5rem; border: none; border-radius: var(--radius-sm); cursor: pointer; font-weight: 500; transition: var(--transition); }
+.btn-primary { background: var(--accent-blue); color: white; }
+.btn-primary:hover { background: var(--accent-blue-light); }
+.btn-secondary { background: var(--bg-elevated); color: var(--text-primary); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--bg-surface); }
+.history-list { max-height: 400px; overflow-y: auto; }
+.history-item { padding: 1rem; border-bottom: 1px solid var(--border); background: var(--bg-elevated); margin-bottom: 0.5rem; border-radius: var(--radius-sm); }
+.history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.history-severity { padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.8em; font-weight: bold; }
+.severity-critical { background: var(--accent-red); color: white; }
+.severity-high { background: var(--accent-amber); color: white; }
+.severity-medium { background: var(--accent-blue); color: white; }
+.severity-low { background: var(--accent-green); color: white; }
+.history-category { font-weight: 500; color: var(--text-secondary); }
+.history-time { font-size: 0.9em; color: var(--text-muted); }
+.history-title { font-weight: 500; color: var(--text-primary); }
+.history-body { color: var(--text-secondary); margin-top: 0.25rem; }
+.loading, .no-data, .error { text-align: center; padding: 2rem; color: var(--text-muted); }
+input[type="number"], select { background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.5rem; }
+input[type="number"]:focus, select:focus { outline: none; border-color: var(--accent-blue); }
+</style>
+{% endblock %}

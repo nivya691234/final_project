@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}Processes — Software Aging Analyzer{% endblock %}
+{% block page_title %}Process Analysis{% endblock %}
+
+{% block content %}
+<!-- Top Processes Table -->
+<div class="table-card">
+    <div class="chart-header">
+        <span class="chart-title">🔄 Top Processes by Memory</span>
+        <span class="chart-badge ram-badge">LIVE</span>
+    </div>
+    <div class="table-scroll">
+        <table class="data-table" id="proc-table">
+            <thead>
+                <tr>
+                    <th>PID</th>
+                    <th>Name</th>
+                    <th>CPU %</th>
+                    <th>Memory %</th>
+                    <th>Threads</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="proc-tbody">
+                <tr>
+                    <td colspan="6" class="empty-row">Loading process data…</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Process Trend Charts -->
+<div class="charts-grid">
+    <div class="chart-card">
+        <div class="chart-header">
+            <span class="chart-title">Process Memory Usage Trend (Top 5)</span>
+            <span class="chart-badge ram-badge">TREND</span>
+        </div>
+        <div style="position: relative; height: 200px; width: 100%;">
+            <canvas id="chartProcMem"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-header">
+            <span class="chart-title">Process CPU Usage Trend (Top 5)</span>
+            <span class="chart-badge cpu-badge">TREND</span>
+        </div>
+        <div style="position: relative; height: 200px; width: 100%;">
+            <canvas id="chartProcCPU"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const COLORS = ['#4ade80', '#f59e0b', '#a78bfa', '#00d4ff', '#ff6b35'];
+    let memChart = null, cpuChart = null;
+
+    function buildMultiLine(canvasId, datasets, labels) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        return new Chart(ctx, {
+            type: 'line',
+            data: { labels, datasets },
+            options: {
+                animation: false, responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#8b9ab0', boxWidth: 12 } }, tooltip: { mode: 'index', intersect: false } },
+                scales: {
+                    x: { ticks: { color: '#8b9ab0', maxTicksLimit: 8 }, grid: { color: '#1e2a3a' } },
+                    y: { ticks: { color: '#8b9ab0' }, grid: { color: '#1e2a3a' }, beginAtZero: true },
+                }
+            }
+        });
+    }
+
+    async function refresh() {
+        try {
+            const d = await fetch('/api/process-metrics').then(r => r.json());
+
+            // Process table
+            const procs = d.top_processes || [];
+            document.getElementById('proc-tbody').innerHTML = procs.length ? procs.map((p, i) => {
+                const cpuCls = p.cpu > 50 ? 'danger' : p.cpu > 20 ? 'warning' : 'ok';
+                const memCls = p.memory > 50 ? 'danger' : p.memory > 20 ? 'warning' : 'ok';
+                return `<tr>
+        <td class="mono">${p.pid}</td>
+        <td class="proc-name">${p.name}</td>
+        <td class="${cpuCls}">${(p.cpu || 0).toFixed(1)}%</td>
+        <td class="${memCls}">${(p.memory || 0).toFixed(2)}%</td>
+        <td>${p.threads || 0}</td>
+        <td><span class="badge badge-${memCls}">${memCls.toUpperCase()}</span></td>
+      </tr>`;
+            }).join('') : '<tr><td colspan="6" class="empty-row">No process data yet…</td></tr>';
+
+            // Build chart datasets from series
+            const series = d.series || {};
+            const names = Object.keys(series);
+            if (!names.length) return;
+
+            // Use first series labels as timeline
+            const firstSeries = series[names[0]];
+            const labels = firstSeries.labels || [];
+
+            const memDS = names.map((n, i) => ({
+                label: n, data: series[n].memory || [],
+                borderColor: COLORS[i % COLORS.length],
+                backgroundColor: COLORS[i % COLORS.length] + '18',
+                borderWidth: 2, pointRadius: 0, tension: 0.4, fill: false,
+            }));
+            const cpuDS = names.map((n, i) => ({
+                label: n, data: series[n].cpu || [],
+                borderColor: COLORS[i % COLORS.length],
+                backgroundColor: COLORS[i % COLORS.length] + '18',
+                borderWidth: 2, pointRadius: 0, tension: 0.4, fill: false,
+            }));
+
+            if (memChart) { memChart.data.labels = labels; memChart.data.datasets = memDS; memChart.update(); }
+            else { memChart = buildMultiLine('chartProcMem', memDS, labels); }
+
+            if (cpuChart) { cpuChart.data.labels = labels; cpuChart.data.datasets = cpuDS; cpuChart.update(); }
+            else { cpuChart = buildMultiLine('chartProcCPU', cpuDS, labels); }
+
+            updateStatusDot(true);
+            setText('global-ts', new Date().toLocaleTimeString());
+        } catch (e) {
+            updateStatusDot(false);
+        }
+    }
+
+    window.addEventListener('load', () => { refresh(); startRefreshCountdown(10, refresh); });
+</script>
+{% endblock %}

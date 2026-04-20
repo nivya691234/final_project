@@ -1,0 +1,105 @@
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\acer\AppData\Local\Programs\Python\Python311\Lib\logging\__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+  File "C:\Users\acer\AppData\Local\Programs\Python\Python311\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f514' in position 36: character maps to <undefined>
+Call stack:
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\notifier_service.py", line 73, in <module>
+    main()
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\notifier_service.py", line 61, in main
+    sent = notifier.run()
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\core\notifier.py", line 247, in run
+    shown.extend(self._check_recommendations(prefs))
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\core\notifier.py", line 358, in _check_recommendations
+    if self._fire(title, body, priority, "recommendation", "system", key):
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\core\notifier.py", line 499, in _fire
+    logger.info(
+Message: '\U0001f514 [%s] %s \u2192 %s: %s'
+Arguments: ('HIGH', 'recommendation', 'system', 'Action Recommended')
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\acer\AppData\Local\Programs\Python\Python311\Lib\logging\__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+  File "C:\Users\acer\AppData\Local\Programs\Python\Python311\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f514' in position 36: character maps to <undefined>
+Call stack:
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\notifier_service.py", line 73, in <module>
+    main()
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\notifier_service.py", line 61, in main
+    sent = notifier.run()
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\core\notifier.py", line 239, in run
+    shown.extend(self._check_root_causes(prefs))
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\core\notifier.py", line 289, in _check_root_causes
+    if self._fire(title, body, severity, "root_cause", name, key):
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\core\notifier.py", line 499, in _fire
+    logger.info(
+Message: '\U0001f514 [%s] %s \u2192 %s: %s'
+Arguments: ('CRITICAL', 'root_cause', 'OneDrive.exe', 'Aging Detected — Thread Leak')
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\acer\AppData\Local\Programs\Python\Python311\Lib\logging\__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+  File "C:\Users\acer\AppData\Local\Programs\Python\Python311\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f514' in position 36: character maps to <undefined>
+Call stack:
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\notifier_service.py", line 73, in <module>
+    main()
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\notifier_service.py", line 61, in main
+    sent = notifier.run()
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\core\notifier.py", line 247, in run
+    shown.extend(self._check_recommendations(prefs))
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\core\notifier.py", line 358, in _check_recommendations
+    if self._fire(title, body, priority, "recommendation", "system", key):
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\core\notifier.py", line 499, in _fire
+    logger.info(
+Message: '\U0001f514 [%s] %s \u2192 %s: %s'
+Arguments: ('HIGH', 'recommendation', 'system', 'Action Recommended')
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\acer\AppData\Local\Programs\Python\Python311\Lib\logging\__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+  File "C:\Users\acer\AppData\Local\Programs\Python\Python311\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f514' in position 36: character maps to <undefined>
+Call stack:
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\notifier_service.py", line 73, in <module>
+    main()
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\notifier_service.py", line 61, in main
+    sent = notifier.run()
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\core\notifier.py", line 239, in run
+    shown.extend(self._check_root_causes(prefs))
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\core\notifier.py", line 289, in _check_root_causes
+    if self._fire(title, body, severity, "root_cause", name, key):
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\core\notifier.py", line 499, in _fire
+    logger.info(
+Message: '\U0001f514 [%s] %s \u2192 %s: %s'
+Arguments: ('MEDIUM', 'root_cause', 'atieclxx.exe', 'Aging Detected — Thread Leak')
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\acer\AppData\Local\Programs\Python\Python311\Lib\logging\__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+  File "C:\Users\acer\AppData\Local\Programs\Python\Python311\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f514' in position 36: character maps to <undefined>
+Call stack:
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\notifier_service.py", line 73, in <module>
+    main()
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\notifier_service.py", line 61, in main
+    sent = notifier.run()
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\core\notifier.py", line 247, in run
+    shown.extend(self._check_recommendations(prefs))
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\core\notifier.py", line 358, in _check_recommendations
+    if self._fire(title, body, priority, "recommendation", "system", key):
+  File "C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\core\notifier.py", line 499, in _fire
+    logger.info(
+Message: '\U0001f514 [%s] %s \u2192 %s: %s'
+Arguments: ('HIGH', 'recommendation', 'system', 'Action Recommended')

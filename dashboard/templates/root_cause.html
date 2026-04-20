@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}Root Cause — Software Aging Analyzer{% endblock %}
+{% block page_title %}Root Cause Analysis{% endblock %}
+
+{% block content %}
+<!-- Summary Cards -->
+<!-- Summary Cards (Clickable Filters) -->
+<style>
+    .filter-card {
+        cursor: pointer;
+        border: 2px solid var(--border);
+        transition: 0.2s ease;
+    }
+
+    .filter-card:hover {
+        border-color: var(--text-muted);
+    }
+
+    .filter-card.active-filter {
+        border-color: var(--accent-blue);
+        background: var(--bg-elevated);
+    }
+</style>
+<div class="cards-grid" id="rc-summary">
+    <div class="kpi-card filter-card active-filter" id="filter-ALL" onclick="setFilter('ALL')">
+        <div class="kpi-icon">⚠️</div>
+        <div class="kpi-body">
+            <span class="kpi-label">Total Causes (Clear)</span>
+            <span class="kpi-value" id="rc-count">—</span>
+        </div>
+    </div>
+    <div class="kpi-card filter-card" id="filter-CRITICAL" onclick="setFilter('CRITICAL')">
+        <div class="kpi-icon">🔴</div>
+        <div class="kpi-body">
+            <span class="kpi-label">Critical Issues</span>
+            <span class="kpi-value" id="rc-critical">—</span>
+        </div>
+    </div>
+    <div class="kpi-card filter-card" id="filter-HIGH" onclick="setFilter('HIGH')">
+        <div class="kpi-icon">🟠</div>
+        <div class="kpi-body">
+            <span class="kpi-label">High Severity</span>
+            <span class="kpi-value" id="rc-high">—</span>
+        </div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-icon">🔬</div>
+        <div class="kpi-body">
+            <span class="kpi-label">Dominant Cause</span>
+            <span class="kpi-value kpi-value-sm" id="rc-dominant">—</span>
+        </div>
+    </div>
+</div>
+
+<!-- Root Cause List -->
+<div class="table-card">
+    <div class="chart-header">
+        <span class="chart-title">🔍 Detected Root Causes</span>
+        <span class="chart-badge">HISTORY</span>
+    </div>
+    <div class="table-scroll">
+        <table class="data-table" id="rc-table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Process</th>
+                    <th>Cause</th>
+                    <th>Severity</th>
+                    <th>Detail</th>
+                </tr>
+            </thead>
+            <tbody id="rc-tbody">
+                <tr>
+                    <td colspan="5" class="empty-row">Loading root cause data…</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Cause Category Breakdown Chart -->
+<div class="chart-card" style="margin-top:1.5rem">
+    <div class="chart-header">
+        <span class="chart-title">📊 Cause Category Distribution</span>
+    </div>
+    <div style="max-width:420px; margin:auto;">
+        <div style="position: relative; height: 260px; width: 100%;">
+            <canvas id="chartCauses"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let causeChart = null;
+
+    let currentFilter = 'ALL';
+
+    window.setFilter = function (level) {
+        currentFilter = level;
+        document.querySelectorAll('.filter-card').forEach(c => c.classList.remove('active-filter'));
+        document.getElementById('filter-' + level).classList.add('active-filter');
+        refresh();
+    };
+
+    async function refresh() {
+        try {
+            const d = await fetch('/api/root-causes').then(r => r.json());
+            const causes = d.causes || [];
+
+            // Summary counts
+            const critical = causes.filter(c => c.severity === 'CRITICAL').length;
+            const high = causes.filter(c => c.severity === 'HIGH').length;
+            setText('rc-count', causes.length);
+            setText('rc-critical', critical);
+            setText('rc-high', high);
+
+            // Dominant cause (first = most recent)
+            const dominant = causes.find(c => c.cause !== 'Normal Operation');
+            setText('rc-dominant', dominant ? dominant.cause : 'None');
+
+            // Apply filter
+            const filtered_causes = currentFilter === 'ALL' ? causes : causes.filter(c => c.severity === currentFilter);
+
+            // Table
+            document.getElementById('rc-tbody').innerHTML = filtered_causes.length ?
+                filtered_causes.map(c => {
+                    const sevCls = { 'CRITICAL': 'danger', 'HIGH': 'warning', 'MEDIUM': 'info', 'LOW': 'ok' }[c.severity] || 'ok';
+                    return `<tr>
+          <td class="mono ts-col">${c.ts_human || '—'}</td>
+          <td class="proc-name">${c.name || 'system'}</td>
+          <td>${c.cause}</td>
+          <td><span class="badge badge-${sevCls}">${c.severity}</span></td>
+          <td class="detail-col">${c.detail || '—'}</td>
+        </tr>`;
+                }).join('') : `<tr><td colspan="5" class="empty-row">${currentFilter === 'ALL' ? 'No causes recorded yet – waiting for analysis cycle…' : 'No causes found for this severity filter.'}</td></tr>`;
+
+            // Pie chart: count by cause type
+            const catCount = {};
+            causes.forEach(c => { catCount[c.cause] = (catCount[c.cause] || 0) + 1; });
+            const cats = Object.keys(catCount);
+            const counts = cats.map(k => catCount[k]);
+            const PIE_COLORS = ['#4ade80', '#f59e0b', '#ef4444', '#a78bfa', '#00d4ff', '#ff6b35', '#64748b'];
+
+            if (causeChart) {
+                causeChart.data.labels = cats;
+                causeChart.data.datasets[0].data = counts;
+                causeChart.data.datasets[0].backgroundColor = cats.map((_, i) => PIE_COLORS[i % PIE_COLORS.length]);
+                causeChart.update();
+            } else if (cats.length) {
+                causeChart = new Chart(document.getElementById('chartCauses').getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: cats,
+                        datasets: [{ data: counts, backgroundColor: cats.map((_, i) => PIE_COLORS[i % PIE_COLORS.length]), borderWidth: 0 }]
+                    },
+                    options: {
+                        plugins: { legend: { labels: { color: '#8b9ab0', padding: 16 } } },
+                        cutout: '65%',
+                    }
+                });
+            }
+
+            updateStatusDot(true);
+            setText('global-ts', new Date().toLocaleTimeString());
+        } catch (e) { updateStatusDot(false); }
+    }
+
+    window.addEventListener('load', () => { refresh(); startRefreshCountdown(15, refresh); });
+</script>
+{% endblock %}

@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+{% block title %}Overview — Software Aging Analyzer{% endblock %}
+{% block page_title %}System Overview{% endblock %}
+
+{% block content %}
+<!-- KPI Cards Row -->
+<div class="cards-grid" id="kpi-cards">
+  <div class="kpi-card" id="card-cpu">
+    <div class="kpi-icon cpu-icon">🖥️</div>
+    <div class="kpi-body">
+      <span class="kpi-label">CPU Usage</span>
+      <span class="kpi-value" id="kpi-cpu">—</span>
+      <span class="kpi-unit">%</span>
+    </div>
+    <div class="kpi-bar">
+      <div class="kpi-fill" id="bar-cpu"></div>
+    </div>
+  </div>
+
+  <div class="kpi-card" id="card-ram">
+    <div class="kpi-icon ram-icon">💾</div>
+    <div class="kpi-body">
+      <span class="kpi-label">RAM Usage</span>
+      <span class="kpi-value" id="kpi-ram">—</span>
+      <span class="kpi-unit">%</span>
+    </div>
+    <div class="kpi-bar">
+      <div class="kpi-fill" id="bar-ram"></div>
+    </div>
+  </div>
+
+  <div class="kpi-card" id="card-disk">
+    <div class="kpi-icon disk-icon">💿</div>
+    <div class="kpi-body">
+      <span class="kpi-label">Disk Usage</span>
+      <span class="kpi-value" id="kpi-disk">—</span>
+      <span class="kpi-unit">%</span>
+    </div>
+    <div class="kpi-bar">
+      <div class="kpi-fill" id="bar-disk"></div>
+    </div>
+  </div>
+
+  <div class="kpi-card" id="card-net">
+    <div class="kpi-icon net-icon">🌐</div>
+    <div class="kpi-body">
+      <span class="kpi-label">Net ↓ Recv</span>
+      <span class="kpi-value" id="kpi-net">—</span>
+      <span class="kpi-unit">KB/s</span>
+    </div>
+    <div class="kpi-bar">
+      <div class="kpi-fill kpi-fill-net" id="bar-net"></div>
+    </div>
+  </div>
+
+  <div class="kpi-card" id="card-health">
+    <div class="kpi-icon health-icon">❤️</div>
+    <div class="kpi-body">
+      <span class="kpi-label">Failure Risk (60 min)</span>
+      <span class="kpi-value" id="kpi-risk">—</span>
+      <span class="kpi-unit">%</span>
+    </div>
+    <div class="kpi-badge" id="risk-badge">NORMAL</div>
+  </div>
+
+  <div class="kpi-card" id="card-cause">
+    <div class="kpi-icon cause-icon">🔍</div>
+    <div class="kpi-body">
+      <span class="kpi-label">Latest Cause</span>
+      <span class="kpi-value kpi-value-sm" id="kpi-cause">—</span>
+    </div>
+    <div class="kpi-badge" id="cause-badge">LOW</div>
+  </div>
+</div>
+
+<!-- System Metric Charts -->
+<div class="charts-grid">
+  <div class="chart-card">
+    <div class="chart-header">
+      <span class="chart-title">CPU Usage Trend</span>
+      <span class="chart-badge cpu-badge">LIVE</span>
+    </div>
+    <div style="position: relative; height: 180px; width: 100%;">
+      <canvas id="chartCPU"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-header">
+      <span class="chart-title">RAM Usage Trend</span>
+      <span class="chart-badge ram-badge">LIVE</span>
+    </div>
+    <div style="position: relative; height: 180px; width: 100%;">
+      <canvas id="chartRAM"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-header">
+      <span class="chart-title">Disk Usage Trend</span>
+      <span class="chart-badge disk-badge">LIVE</span>
+    </div>
+    <div style="position: relative; height: 180px; width: 100%;">
+      <canvas id="chartDisk"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-header">
+      <span class="chart-title">Network Throughput (KB/s)</span>
+      <span class="chart-badge net-badge">LIVE</span>
+    </div>
+    <div style="position: relative; height: 180px; width: 100%;">
+      <canvas id="chartNet"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Baseline Comparison Table -->
+<div class="table-card">
+  <div class="chart-header">
+    <span class="chart-title">📊 System Efficiency: Without Analyzer (Baseline) vs With Analyzer (Current)</span>
+  </div>
+  <table class="data-table" id="baseline-table">
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th>Before (Baseline)</th>
+        <th>After (Current)</th>
+        <th>Efficiency Gain</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="baseline-tbody">
+      <tr>
+        <td colspan="5" class="empty-row">Loading…</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const charts = {};
+
+  function buildLineChart(id, label, color, data = { labels: [], data: [] }) {
+    const ctx = document.getElementById(id).getContext('2d');
+    return new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: label, data: data.data,
+          borderColor: color, backgroundColor: color + '22',
+          borderWidth: 2, pointRadius: 0, tension: 0.4, fill: true,
+        }]
+      },
+      options: {
+        animation: false, responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+        scales: {
+          x: { ticks: { color: '#8b9ab0', maxTicksLimit: 8 }, grid: { color: '#1e2a3a' } },
+          y: { ticks: { color: '#8b9ab0' }, grid: { color: '#1e2a3a' }, beginAtZero: true },
+        }
+      }
+    });
+  }
+
+  function buildNetChart(id, d = { labels: [], recv: [], send: [] }) {
+    const ctx = document.getElementById(id).getContext('2d');
+    return new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: d.labels,
+        datasets: [
+          { label: 'Recv KB/s', data: d.recv, borderColor: '#00d4ff', backgroundColor: '#00d4ff22', borderWidth: 2, pointRadius: 0, tension: 0.4, fill: true },
+          { label: 'Send KB/s', data: d.send, borderColor: '#ff6b35', backgroundColor: '#ff6b3522', borderWidth: 2, pointRadius: 0, tension: 0.4, fill: true },
+        ]
+      },
+      options: {
+        animation: false, responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: true, labels: { color: '#8b9ab0' } }, tooltip: { mode: 'index', intersect: false } },
+        scales: {
+          x: { ticks: { color: '#8b9ab0', maxTicksLimit: 8 }, grid: { color: '#1e2a3a' } },
+          y: { ticks: { color: '#8b9ab0' }, grid: { color: '#1e2a3a' }, beginAtZero: true },
+        }
+      }
+    });
+  }
+
+  async function refresh() {
+    try {
+      const [sm, status] = await Promise.all([
+        fetch('/api/system-metrics').then(r => r.json()),
+        fetch('/api/current-status').then(r => r.json()),
+      ]);
+
+      // KPI cards
+      const cpu = status.cpu || 0;
+      const ram = status.ram || 0;
+      const disk = status.disk || 0;
+      const net = status.net_recv_kbps || 0;
+      const risk = ((status.failure_probability || 0) * 100).toFixed(1);
+
+      setText('kpi-cpu', cpu.toFixed(1));
+      setText('kpi-ram', ram.toFixed(1));
+      setText('kpi-disk', disk.toFixed(1));
+      setText('kpi-net', net.toFixed(2));
+      setText('kpi-risk', risk);
+      setText('kpi-cause', status.latest_cause || '—');
+
+      setBar('bar-cpu', cpu);
+      setBar('bar-ram', ram);
+      setBar('bar-disk', disk);
+      setBar('bar-net', Math.min(net / 10, 100));
+
+      setBadge('risk-badge', status.priority || 'NORMAL');
+      setBadge('cause-badge', status.latest_severity || 'LOW');
+      colorCard('card-cpu', cpu, 80, 60);
+      colorCard('card-ram', ram, 80, 60);
+      colorCard('card-disk', disk, 90, 70);
+
+      // Update charts
+      const L = sm.labels || [];
+      const Lc = L.slice(-60);
+      updateChart(charts.cpu, Lc, (sm.cpu || []).slice(-60));
+      updateChart(charts.ram, Lc, (sm.ram || []).slice(-60));
+      updateChart(charts.disk, Lc, (sm.disk || []).slice(-60));
+      updateNetChart(charts.net, Lc, (sm.net_recv_kb || []).slice(-60), (sm.net_send_kb || []).slice(-60));
+
+      // Baseline table
+      const bl = status;
+      const rows = [
+        ['CPU', bl.baseline_cpu, cpu, '%'],
+        ['RAM', bl.baseline_ram, ram, '%'],
+        ['Disk', bl.baseline_disk, disk, '%'],
+      ];
+      document.getElementById('baseline-tbody').innerHTML = rows.map(([m, b, c, u]) => {
+        const delta = (c - b).toFixed(1);
+        const saved = (b - c).toFixed(1);
+        const isImproved = saved > 0;
+        const cls = delta > 10 ? 'danger' : delta > 5 ? 'warning' : 'ok';
+        const gainCls = isImproved ? 'ok' : (delta > 10 ? 'danger' : 'warning');
+        return `<tr>
+        <td>${m}</td>
+        <td>${(+b).toFixed(1)}${u}</td>
+        <td>${(+c).toFixed(1)}${u}</td>
+        <td class="${gainCls}">
+          ${isImproved ? '🟢 Saved ' + saved + u : '🔴 Increased ' + delta + u}
+        </td>
+        <td><span class="badge badge-${cls}">${isImproved ? 'IMPROVED' : (delta > 10 ? 'HIGH' : delta > 5 ? 'MED' : 'OK')}</span></td>
+      </tr>`;
+      }).join('');
+
+      updateStatusDot(true);
+      setText('global-ts', new Date().toLocaleTimeString());
+    } catch (e) {
+      updateStatusDot(false);
+    }
+  }
+
+  function init() {
+    charts.cpu = buildLineChart('chartCPU', 'CPU %', '#4ade80');
+    charts.ram = buildLineChart('chartRAM', 'RAM %', '#f59e0b');
+    charts.disk = buildLineChart('chartDisk', 'Disk %', '#a78bfa');
+    charts.net = buildNetChart('chartNet');
+    refresh();
+    startRefreshCountdown(10, refresh);
+  }
+  window.addEventListener('load', init);
+</script>
+{% endblock %}

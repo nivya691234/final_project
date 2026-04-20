@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %}Predictions — Software Aging Analyzer{% endblock %}
+{% block page_title %}Failure Predictions{% endblock %}
+
+{% block content %}
+<!-- Prediction Status Cards -->
+<div class="cards-grid">
+    <div class="kpi-card">
+        <div class="kpi-icon">⚡</div>
+        <div class="kpi-body">
+            <span class="kpi-label">Failure Risk (60 min)</span>
+            <span class="kpi-value" id="pred-prob">—</span>
+            <span class="kpi-unit">%</span>
+        </div>
+        <div class="kpi-badge" id="pred-badge">NORMAL</div>
+    </div>
+
+    <div class="kpi-card">
+        <div class="kpi-icon">🔁</div>
+        <div class="kpi-body">
+            <span class="kpi-label">Optimal Restart Time</span>
+            <span class="kpi-value kpi-value-sm" id="pred-restart">—</span>
+        </div>
+    </div>
+
+    <div class="kpi-card">
+        <div class="kpi-icon">💥</div>
+        <div class="kpi-body">
+            <span class="kpi-label">Predicted Crash Time</span>
+            <span class="kpi-value kpi-value-sm" id="pred-crash">—</span>
+            <span style="font-size: 0.75rem; color: var(--accent-red); margin-top: 4px; display: none;"
+                id="pred-cause-text"></span>
+        </div>
+    </div>
+
+    <div class="kpi-card">
+        <div class="kpi-icon">λ</div>
+        <div class="kpi-body">
+            <span class="kpi-label">Failure Rate (λ)</span>
+            <span class="kpi-value" id="pred-lambda">—</span>
+        </div>
+    </div>
+</div>
+
+<!-- Failure Probability Curve -->
+<div class="chart-card">
+    <div class="chart-header">
+        <span class="chart-title">📈 Failure Probability Curve (0–120 min horizon)</span>
+        <span class="chart-badge">MODEL</span>
+    </div>
+    <div style="position: relative; height: 240px; width: 100%;">
+        <canvas id="chartCurve"></canvas>
+    </div>
+</div>
+
+<!-- Historical Failure Probability -->
+<div class="chart-card" style="margin-top:1.5rem">
+    <div class="chart-header">
+        <span class="chart-title">📊 Historical Failure Probability Trend</span>
+        <span class="chart-badge">HISTORY</span>
+    </div>
+    <div style="position: relative; height: 200px; width: 100%;">
+        <canvas id="chartHistProb"></canvas>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let curveChart = null, histChart = null;
+
+    function buildAreaChart(id, label, color, labels, data) {
+        return new Chart(document.getElementById(id).getContext('2d'), {
+            type: 'line',
+            data: {
+                labels, datasets: [{
+                    label, data, borderColor: color, backgroundColor: color + '33',
+                    borderWidth: 2.5, pointRadius: 0, tension: 0.4, fill: true,
+                }]
+            },
+            options: {
+                animation: false, responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+                scales: {
+                    x: { ticks: { color: '#8b9ab0', maxTicksLimit: 10 }, grid: { color: '#1e2a3a' } },
+                    y: { min: 0, max: 100, ticks: { color: '#8b9ab0', callback: v => v + '%' }, grid: { color: '#1e2a3a' } }
+                }
+            }
+        });
+    }
+
+    // Threshold annotation line (drawn manually on chart)
+    function addThresholdLine(chart, pct) {
+        const plugin = {
+            id: 'thresholdLine',
+            afterDraw(chart) {
+                const { ctx, scales: { x, y } } = chart;
+                const yPx = y.getPixelForValue(pct);
+                ctx.save();
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([6, 4]);
+                ctx.beginPath();
+                ctx.moveTo(x.left, yPx);
+                ctx.lineTo(x.right, yPx);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#ef4444';
+                ctx.font = '11px Inter';
+                ctx.fillText('Failure Threshold (75%)', x.left + 6, yPx - 5);
+                ctx.restore();
+            }
+        };
+        Chart.register(plugin);
+    }
+
+    async function refresh() {
+        try {
+            const d = await fetch('/api/predictions').then(r => r.json());
+
+            const probPct = ((d.latest_probability || 0) * 100).toFixed(1);
+            setText('pred-prob', probPct);
+            setText('pred-restart', d.predicted_restart || '—');
+            setText('pred-crash', d.predicted_crash || '—');
+            setText('pred-lambda', (d.lambda_val || 0).toExponential(2));
+            setBadge('pred-badge', d.priority || 'NORMAL');
+
+            const causeEl = document.getElementById('pred-cause-text');
+            if (d.predicted_crash && d.cause_name && d.cause_name !== 'system') {
+                causeEl.style.display = 'block';
+                causeEl.innerHTML = `Driven by: <strong>${d.cause_name}</strong>`;
+            } else {
+                causeEl.style.display = 'none';
+            }
+
+            // Failure curve
+            const curveLabels = d.curve_labels || [];
+            const curveProbs = d.curve_probs || [];
+            if (curveChart) {
+                curveChart.data.labels = curveLabels;
+                curveChart.data.datasets[0].data = curveProbs;
+                curveChart.update();
+            } else {
+                curveChart = buildAreaChart('chartCurve', 'P(failure) %', '#ef4444', curveLabels, curveProbs);
+                addThresholdLine(curveChart, 75);
+            }
+
+            // Historical trend
+            const histLabels = d.labels || [];
+            const histProbs = d.probabilities || [];
+            if (histChart) {
+                histChart.data.labels = histLabels;
+                histChart.data.datasets[0].data = histProbs;
+                histChart.update();
+            } else {
+                histChart = buildAreaChart('chartHistProb', 'Risk %', '#f59e0b', histLabels, histProbs);
+            }
+
+            updateStatusDot(true);
+            setText('global-ts', new Date().toLocaleTimeString());
+        } catch (e) { updateStatusDot(false); }
+    }
+
+    window.addEventListener('load', () => { refresh(); startRefreshCountdown(15, refresh); });
+</script>
+{% endblock %}

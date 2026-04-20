@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}Recommendations — Software Aging Analyzer{% endblock %}
+{% block page_title %}Prevention & Actions{% endblock %}
+
+{% block content %}
+<!-- Summary Strip (Clickable Filters) -->
+<style>
+    .filter-card {
+        cursor: pointer;
+        border: 2px solid var(--border);
+        transition: 0.2s ease;
+    }
+
+    .filter-card:hover {
+        border-color: var(--text-muted);
+    }
+
+    .filter-card.active-filter {
+        border-color: var(--accent-blue);
+        background: var(--bg-elevated);
+    }
+</style>
+<div class="cards-grid">
+    <div class="kpi-card filter-card active-filter" id="filter-ALL" onclick="setFilter('ALL')">
+        <div class="kpi-icon">💡</div>
+        <div class="kpi-body">
+            <span class="kpi-label">Total Actions (Clear Filter)</span>
+            <span class="kpi-value" id="rec-total">—</span>
+        </div>
+    </div>
+    <div class="kpi-card filter-card" id="filter-CRITICAL" onclick="setFilter('CRITICAL')">
+        <div class="kpi-icon">🔴</div>
+        <div class="kpi-body">
+            <span class="kpi-label">Critical Actions</span>
+            <span class="kpi-value" id="rec-critical">—</span>
+        </div>
+    </div>
+    <div class="kpi-card filter-card" id="filter-HIGH" onclick="setFilter('HIGH')">
+        <div class="kpi-icon">🟠</div>
+        <div class="kpi-body">
+            <span class="kpi-label">High Priority</span>
+            <span class="kpi-value" id="rec-high">—</span>
+        </div>
+    </div>
+    <div class="kpi-card filter-card" id="filter-MEDIUM" onclick="setFilter('MEDIUM')">
+        <div class="kpi-icon">🟡</div>
+        <div class="kpi-body">
+            <span class="kpi-label">Medium Priority</span>
+            <span class="kpi-value" id="rec-medium">—</span>
+        </div>
+    </div>
+</div>
+
+<!-- Recommendation Cards Grid -->
+<div id="rec-grid" class="rec-grid">
+    <p class="empty-message">Loading recommendations…</p>
+</div>
+
+<!-- Recommendation History Table -->
+<div class="table-card" style="margin-top:1.5rem">
+    <div class="chart-header">
+        <span class="chart-title">📋 Full Recommendation History</span>
+    </div>
+    <div class="table-scroll">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Priority</th>
+                    <th>Cause</th>
+                    <th>Recommendation</th>
+                </tr>
+            </thead>
+            <tbody id="rec-tbody">
+                <tr>
+                    <td colspan="4" class="empty-row">No data yet…</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const PRIORITY_ICON = { CRITICAL: '🔴', HIGH: '🟠', MEDIUM: '🟡', LOW: '🟢', NORMAL: '⚪' };
+
+    let currentFilter = 'ALL';
+
+    window.setFilter = function (level) {
+        currentFilter = level;
+        document.querySelectorAll('.filter-card').forEach(c => c.classList.remove('active-filter'));
+        document.getElementById('filter-' + level).classList.add('active-filter');
+        refresh(); // re-render with new filter
+    };
+
+    async function refresh() {
+        try {
+            const d = await fetch('/api/recommendations').then(r => r.json());
+            const recs = d.recommendations || [];
+
+            setText('rec-total', recs.length);
+            setText('rec-critical', recs.filter(r => r.priority === 'CRITICAL').length);
+            setText('rec-high', recs.filter(r => r.priority === 'HIGH').length);
+            setText('rec-medium', recs.filter(r => r.priority === 'MEDIUM').length);
+
+            // Apply filter
+            const filtered_recs = currentFilter === 'ALL' ? recs : recs.filter(r => r.priority === currentFilter);
+
+            // Recommendation action cards
+            const grid = document.getElementById('rec-grid');
+            if (!filtered_recs.length) {
+                grid.innerHTML = '<p class="empty-message">No recommendations found for this filter.</p>';
+            } else {
+                // De-duplicate by recommendation text for cards view
+                const seen = new Set();
+                const unique = filtered_recs.filter(r => { const k = r.recommendation; if (seen.has(k)) return false; seen.add(k); return true; });
+                grid.innerHTML = unique.map(r => {
+                    const cls = { 'CRITICAL': 'rec-critical', 'HIGH': 'rec-high', 'MEDIUM': 'rec-medium', 'LOW': 'rec-low', 'NORMAL': 'rec-normal' }[r.priority] || 'rec-normal';
+                    return `<div class="rec-card ${cls}">
+          <div class="rec-header">
+            <span class="rec-icon">${PRIORITY_ICON[r.priority] || '⚪'}</span>
+            <span class="rec-priority">${r.priority}</span>
+            <span class="rec-cause">${r.related_cause || ''}</span>
+          </div>
+          <p class="rec-text">${r.recommendation}</p>
+          <span class="rec-time">${r.ts_human || '—'}</span>
+        </div>`;
+                }).join('');
+            }
+
+            // History table
+            document.getElementById('rec-tbody').innerHTML = filtered_recs.length ?
+                filtered_recs.map(r => {
+                    const sevCls = { 'CRITICAL': 'danger', 'HIGH': 'warning', 'MEDIUM': 'info', 'LOW': 'ok', 'NORMAL': 'ok' }[r.priority] || 'ok';
+                    return `<tr>
+          <td class="mono ts-col">${r.ts_human || '—'}</td>
+          <td><span class="badge badge-${sevCls}">${r.priority}</span></td>
+          <td>${r.related_cause || '—'}</td>
+          <td>${r.recommendation}</td>
+        </tr>`;
+                }).join('') : '<tr><td colspan="4" class="empty-row">No recommendations found for this filter.</td></tr>';
+
+            updateStatusDot(true);
+            setText('global-ts', new Date().toLocaleTimeString());
+        } catch (e) { updateStatusDot(false); }
+    }
+
+    window.addEventListener('load', () => { refresh(); startRefreshCountdown(15, refresh); });
+</script>
+{% endblock %}

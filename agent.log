@@ -1,0 +1,8 @@
+14:13:39 [INFO    ] monitor_agent — ============================================================
+14:13:39 [INFO    ] monitor_agent —   Software Aging Monitoring Agent
+14:13:39 [INFO    ] monitor_agent — ============================================================
+14:13:39 [INFO    ] database.db_manager — Database initialised at C:\Users\acer\Downloads\softwareaginganalyser\softwareaginganalyser\aging.db
+14:13:39 [INFO    ] monitor_agent — Database ready.
+14:13:40 [INFO    ] core.collector — Baseline captured: CPU=27.7% RAM=80.1% Disk=76.4%
+14:13:40 [INFO    ] core.collector — DataCollector started (interval=1s)
+14:13:41 [INFO    ] monitor_agent — Agent running (interval=1s).

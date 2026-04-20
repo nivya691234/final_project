@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Software Aging Analyzer{% endblock %}</title>
+  <meta name="description" content="Enterprise Software Aging Analyzer and Rejuvenation Prediction Tool" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="{{ url_for('static', filename='js/icons.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+</head>
+
+<body>
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">⚙️</div>
+      <div class="brand-text">
+        <span class="brand-name">SoftAging</span>
+        <span class="brand-sub">Analyzer v1.0</span>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li class="nav-item">
+        <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}" id="nav-overview">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-label">Overview</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/processes" class="nav-link {% if request.path == '/processes' %}active{% endif %}" id="nav-processes">
+          <span class="nav-icon">🔄</span>
+          <span class="nav-label">Processes</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/root-cause" class="nav-link {% if request.path == '/root-cause' %}active{% endif %}"
+          id="nav-rootcause">
+          <span class="nav-icon">🔍</span>
+          <span class="nav-label">Root Cause</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/predictions" class="nav-link {% if request.path == '/predictions' %}active{% endif %}"
+          id="nav-predictions">
+          <span class="nav-icon">📈</span>
+          <span class="nav-label">Predictions</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/recommendations" class="nav-link {% if request.path == '/recommendations' %}active{% endif %}"
+          id="nav-recommendations">
+          <span class="nav-icon">💡</span>
+          <span class="nav-label">Actions</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/settings" class="nav-link {% if request.path == '/settings' %}active{% endif %}" id="nav-settings">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Settings</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div class="status-dot" id="status-dot"></div>
+      <span class="status-text" id="status-text">Connecting…</span>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="page-header">
+      <h1 class="page-title">{% block page_title %}Overview{% endblock %}</h1>
+      <div class="header-right">
+        <span class="refresh-badge" id="refresh-countdown">Auto-refresh: 10s</span>
+        <span class="timestamp" id="global-ts">—</span>
+      </div>
+    </header>
+
+    <div class="content-area">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <!-- AI Chatbot Widget -->
+  <div class="chat-widget-btn" id="chat-toggle" title="AI Remediation Assistant">
+    ✨
+  </div>
+
+  <div class="chat-window" id="chat-window">
+    <div class="chat-header">
+      <div class="chat-title">
+        <span>✨</span>
+        <span>Remediation AI</span>
+      </div>
+      <div class="chat-close" id="chat-close">✖</div>
+    </div>
+
+    <div class="chat-body" id="chat-body">
+      <div class="chat-msg bot">
+        <div class="msg-bubble">Hello! I am monitoring the system for signs of aging. If I detect an issue, I can help
+          you kill, restart, suspend, set CPU affinity, lower priority, or disable Startup items. How can I help?</div>
+        <span class="chat-msg-time">System</span>
+      </div>
+    </div>
+
+    <div class="chat-footer">
+      <input type="text" class="chat-input" id="chat-input" placeholder="Type a command... (e.g. 'kill python')">
+      <button class="chat-send" id="chat-send">➤</button>
+    </div>
+  </div>
+
+  <!-- Auto-remediation approval modal -->
+  <div class="action-modal" id="action-modal" aria-hidden="true">
+    <div class="action-modal-backdrop"></div>
+    <div class="action-modal-card" role="dialog" aria-modal="true">
+      <div class="action-modal-title">Action Required</div>
+      <div class="action-modal-body" id="action-modal-body">—</div>
+      <div class="action-modal-actions">
+        <button class="btn-secondary" id="action-deny">Deny</button>
+        <button class="btn-primary" id="action-approve">Approve</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+  <script>
+    // Chatbot UI Logic
+    const chatToggle = document.getElementById('chat-toggle');
+    const chatWindow = document.getElementById('chat-window');
+    const chatClose = document.getElementById('chat-close');
+    const chatBody = document.getElementById('chat-body');
+    const chatInput = document.getElementById('chat-input');
+    const chatSend = document.getElementById('chat-send');
+
+    function toggleChat() { chatWindow.classList.toggle('open'); }
+    chatToggle.addEventListener('click', toggleChat);
+    chatClose.addEventListener('click', () => chatWindow.classList.remove('open'));
+
+    const ACTION_LABELS = {
+      kill: 'Kill Process',
+      restart: 'Restart Process',
+      suspend: 'Suspend Process',
+      resume: 'Resume Process',
+      limit_cpu: 'Limit to 1 Core',
+      set_affinity: 'Set CPU Affinity',
+      lower_priority: 'Lower Priority',
+      disable_startup: 'Disable Startup',
+    };
+
+    const ACTION_ICONS = {
+      kill: '🛑',
+      restart: '🔁',
+      suspend: '⏸️',
+      resume: '▶️',
+      limit_cpu: '⚙️',
+      set_affinity: '🧲',
+      lower_priority: '🔽',
+      disable_startup: '🚫',
+    };
+
+    function actionDetails(actionObj) {
+      if (!actionObj) return '';
+      if (actionObj.type === 'set_affinity' && actionObj.params && actionObj.params.cores) {
+        return ` (cores ${actionObj.params.cores.join(',')})`;
+      }
+      if (actionObj.pid) return ` (PID ${actionObj.pid})`;
+      if (actionObj.target) return ` (${actionObj.target})`;
+      return '';
+    }
+
+    function appendMessage(text, sender, actionObj = null) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `chat-msg ${sender}`;
+
+      const bubble = document.createElement('div');
+      bubble.className = 'msg-bubble';
+      bubble.textContent = text;
+      msgDiv.appendChild(bubble);
+
+      if (actionObj && actionObj.type) {
+        const btn = document.createElement('button');
+        const cls = actionObj.type === 'limit_cpu' ? 'limit' : (actionObj.type === 'lower_priority' ? 'priority' : '');
+        btn.className = `chat-action-btn ${cls}`;
+        const label = ACTION_LABELS[actionObj.type] || 'Run Action';
+        const icon = ACTION_ICONS[actionObj.type] || '⚙️';
+        btn.textContent = `${icon} Approve: ${label}${actionDetails(actionObj)}`;
+        btn.addEventListener('click', () => executeChatAction(actionObj));
+        msgDiv.appendChild(btn);
+      }
+
+      const timeSpan = document.createElement('span');
+      timeSpan.className = 'chat-msg-time';
+      timeSpan.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      msgDiv.appendChild(timeSpan);
+
+      chatBody.appendChild(msgDiv);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    // Auto-remediation prompt logic
+    const actionModal = document.getElementById('action-modal');
+    const actionBody = document.getElementById('action-modal-body');
+    const actionApprove = document.getElementById('action-approve');
+    const actionDeny = document.getElementById('action-deny');
+    const shownActionIds = new Set();
+    const shownNotificationIds = new Set();
+    const actionQueue = [];
+    let activeAction = null;
+
+    function showSystemNotification(action) {
+      if (!('Notification' in window)) return;
+      if (Notification.permission !== 'granted') return;
+      const detail = actionDetails(action);
+      new Notification('Remediation Action', {
+        body: `Pending: ${action.type}${detail}`,
+      });
+    }
+
+    function openActionModal(action) {
+      activeAction = action;
+      actionBody.textContent = `Issue detected: ${action.reason}.\nProposed action: ${ACTION_LABELS[action.type] || action.type}${actionDetails(action)}.`;
+      actionModal.classList.add('open');
+      actionModal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeActionModal() {
+      actionModal.classList.remove('open');
+      actionModal.setAttribute('aria-hidden', 'true');
+      activeAction = null;
+    }
+
+    async function handleDecision(decision) {
+      if (!activeAction) return;
+      const payload = { id: activeAction.id, decision };
+      closeActionModal();
+      try {
+        const res = await fetch('/api/action/decision', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (decision === 'approve') {
+          appendMessage(data.success ? `✅ ${data.message}` : `❌ ${data.message}`, 'bot');
+        } else {
+          appendMessage('Action denied by user.', 'bot');
+        }
+      } catch (err) {
+        appendMessage('Action decision failed.', 'bot');
+      }
+      dequeueAction();
+    }
+
+    function enqueueAction(action) {
+      actionQueue.push(action);
+      if (!activeAction) dequeueAction();
+    }
+
+    function dequeueAction() {
+      if (actionQueue.length === 0) return;
+      const next = actionQueue.shift();
+      openActionModal(next);
+    }
+
+    actionApprove.addEventListener('click', () => handleDecision('approve'));
+    actionDeny.addEventListener('click', () => handleDecision('deny'));
+
+    async function pollPendingActions() {
+      try {
+        const res = await fetch('/api/pending-actions');
+        const data = await res.json();
+        const actions = data.actions || [];
+        actions.forEach(a => {
+          if (shownActionIds.has(a.id)) return;
+          shownActionIds.add(a.id);
+          a.params = a.params || {};
+          a.type = a.type || a.action;
+          enqueueAction(a);
+          showSystemNotification(a);
+        });
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    async function pollNotifications() {
+      if (!('Notification' in window)) return;
+      if (Notification.permission !== 'granted') return;
+
+      try {
+        const res = await fetch('/api/notifications/history?limit=10');
+        const data = await res.json();
+        const notifications = data.notifications || [];
+        notifications.reverse().forEach(n => {
+          const key = `${n.id}:${n.title}:${n.body}`;
+          if (shownNotificationIds.has(key)) return;
+          shownNotificationIds.add(key);
+
+          const title = n.title || 'Software Aging Alert';
+          const body = n.body || '';
+          const severity = n.severity || 'LOW';
+          const type = severity === 'HIGH' || severity === 'CRITICAL' ? 'danger' : 'info';
+
+          if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification(title, { body });
+          }
+          if (typeof showToast === 'function') {
+            showToast(`${title}: ${body}`, type, 8000);
+          }
+        });
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    async function sendChatMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      appendMessage(text, 'user');
+      chatInput.value = '';
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text })
+        });
+        const data = await res.json();
+
+        setTimeout(() => {
+          appendMessage(data.reply, 'bot', data.action);
+        }, 500); // simulated slight delay
+      } catch (err) {
+        appendMessage("Error reaching AI engine.", 'bot');
+      }
+    }
+
+    window.executeChatAction = async function (actionObj) {
+      const details = actionDetails(actionObj);
+      const confirmMsg = `Confirm action: ${actionObj.type}${details}?`;
+      if (!window.confirm(confirmMsg)) {
+        appendMessage('Action cancelled.', 'bot');
+        return;
+      }
+
+      appendMessage(`Executing ${actionObj.type}${details}...`, 'bot');
+      try {
+        const res = await fetch('/api/action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: actionObj.type,
+            target: actionObj.target || null,
+            pid: actionObj.pid || null,
+            params: actionObj.params || {}
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          appendMessage(`✅ Success! ${data.message}`, 'bot');
+        } else {
+          appendMessage(`❌ Failed: ${data.message}`, 'bot');
+        }
+      } catch (err) {
+        appendMessage("System offline or command rejected.", 'bot');
+      }
+    };
+
+    chatSend.addEventListener('click', sendChatMessage);
+    chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); });
+
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+
+    setInterval(pollPendingActions, 10000);
+    setInterval(pollNotifications, 10000);
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+
+</html>
