@@ -15,6 +15,7 @@ Features:
 
 import ctypes
 import logging
+import platform
 import subprocess
 import sys
 import threading
@@ -40,28 +41,36 @@ logger = logging.getLogger(__name__)
 _TOAST_AVAILABLE = False
 _WIN10TOAST_AVAILABLE = False
 
-try:
-    from winsdk.windows.data.xml.dom import XmlDocument
-    from winsdk.windows.ui.notifications import (
-        ToastNotification,
-        ToastNotificationManager,
-    )
-    _TOAST_AVAILABLE = True
-except Exception:
-    pass
+if platform.system() == "Windows":
+    try:
+        from winsdk.windows.data.xml.dom import XmlDocument
+        from winsdk.windows.ui.notifications import (
+            ToastNotification,
+            ToastNotificationManager,
+        )
+        _TOAST_AVAILABLE = True
+    except Exception:
+        XmlDocument = None
+        ToastNotification = None
+        ToastNotificationManager = None
+
+    try:
+        from win10toast import ToastNotifier
+        _WIN10TOAST_AVAILABLE = True
+        _TOAST_AVAILABLE = True
+    except ImportError:
+        ToastNotifier = None
+else:
+    XmlDocument = None
+    ToastNotification = None
+    ToastNotificationManager = None
+    ToastNotifier = None
 
 try:
     from plyer import notification as _plyer_notify
     _TOAST_AVAILABLE = True
 except ImportError:
     _plyer_notify = None
-
-try:
-    from win10toast import ToastNotifier
-    _WIN10TOAST_AVAILABLE = True
-    _TOAST_AVAILABLE = True
-except ImportError:
-    ToastNotifier = None
 
 APP_ID = "SoftwareAgingAnalyzer"
 

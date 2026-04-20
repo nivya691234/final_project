@@ -3,14 +3,14 @@ psutil>=5.9.0          # System and process metrics collection
 numpy>=1.21.0          # Numerical computations
 scipy>=1.7.0           # Statistical analysis (linear regression)
 Flask>=2.0.0           # Web dashboard & API server
-winsdk                 # Windows SDK utilities
-win10toast>=0.9        # Windows desktop toast notifications fallback
-plyer>=2.0.0           # Cross-platform desktop notification fallback
+plyer>=2.0.0           # Cross-platform desktop notification support
+python-dotenv>=1.0.0   # Load environment variables from .env
 
 # Optional dependencies
-# System Tray integration (desktop icon + menu)
+# System tray integration (desktop icon + menu)
 pystray>=0.19.0        # System tray icon (optional)
 Pillow>=9.0.0          # Image manipulation for tray icon (optional)
 
+# Windows-only notification libraries have been removed for cross-platform compatibility.
 # PyInstaller for standalone executable distribution (optional)
 # pip install pyinstaller
