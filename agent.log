@@ -6,3 +6,96 @@
 14:13:40 [INFO    ] core.collector — Baseline captured: CPU=27.7% RAM=80.1% Disk=76.4%
 14:13:40 [INFO    ] core.collector — DataCollector started (interval=1s)
 14:13:41 [INFO    ] monitor_agent — Agent running (interval=1s).
+09:32:20 [INFO    ] monitor_agent — ============================================================
+09:32:20 [INFO    ] monitor_agent —   Software Aging Monitoring Agent
+09:32:20 [INFO    ] monitor_agent — ============================================================
+09:32:20 [INFO    ] database.db_manager — Database initialised at C:\Users\acer\Documents\softwareaginganalyser\aging.db
+09:32:20 [INFO    ] monitor_agent — Database ready.
+09:32:21 [INFO    ] core.collector — Baseline captured: CPU=30.8% RAM=82.7% Disk=79.4%
+09:32:21 [INFO    ] core.collector — DataCollector started (interval=1s)
+09:32:21 [INFO    ] monitor_agent — Agent running (interval=1s).
+09:32:29 [INFO    ] monitor_agent — Shutdown signal received (2). Stopping…
+09:32:32 [INFO    ] core.collector — DataCollector stopped.
+09:32:32 [INFO    ] monitor_agent — Agent shutdown complete.
+10:42:07 [INFO    ] monitor_agent — ============================================================
+10:42:07 [INFO    ] monitor_agent —   Software Aging Monitoring Agent
+10:42:07 [INFO    ] monitor_agent — ============================================================
+10:42:07 [INFO    ] database.db_manager — Database initialised at C:\Users\acer\Documents\softwareaginganalyser\aging.db
+10:42:07 [INFO    ] monitor_agent — Database ready.
+10:42:08 [INFO    ] core.collector — Baseline captured: CPU=34.9% RAM=62.9% Disk=79.6%
+10:42:08 [INFO    ] core.collector — DataCollector started (interval=1s)
+10:42:09 [INFO    ] monitor_agent — Agent running (interval=1s).
+10:53:12 [INFO    ] monitor_agent — Shutdown signal received (2). Stopping…
+10:53:15 [INFO    ] monitor_agent — Shutdown signal received (2). Stopping…
+14:52:07 [INFO    ] monitor_agent — ============================================================
+14:52:07 [INFO    ] monitor_agent —   Software Aging Monitoring Agent
+14:52:07 [INFO    ] monitor_agent — ============================================================
+14:52:07 [INFO    ] database.db_manager — Database initialised at c:\Users\acer\Documents\softwareaginganalyser\aging.db
+14:52:07 [INFO    ] monitor_agent — Database ready.
+14:52:08 [INFO    ] core.collector — Baseline captured: CPU=42.4% RAM=90.6% Disk=83.0%
+14:52:08 [INFO    ] core.collector — DataCollector started (interval=1s)
+14:52:10 [INFO    ] monitor_agent — Shutdown signal received (2). Stopping…
+15:06:38 [INFO    ] monitor_agent — ============================================================
+15:06:38 [INFO    ] monitor_agent —   Software Aging Monitoring Agent
+15:06:38 [INFO    ] monitor_agent — ============================================================
+15:06:38 [INFO    ] database.db_manager — Database initialised at C:\Users\acer\Documents\softwareaginganalyser\aging.db
+15:06:38 [INFO    ] monitor_agent — Database ready.
+15:06:39 [INFO    ] core.collector — Baseline captured: CPU=43.9% RAM=85.3% Disk=90.4%
+15:06:39 [INFO    ] core.collector — DataCollector started (interval=1s)
+15:06:40 [INFO    ] monitor_agent — Agent running (interval=1s).
+15:54:06 [INFO    ] monitor_agent — ============================================================
+15:54:06 [INFO    ] monitor_agent —   Software Aging Monitoring Agent
+15:54:06 [INFO    ] monitor_agent — ============================================================
+15:54:06 [INFO    ] database.db_manager — Database initialised at C:\Users\acer\Documents\softwareaginganalyser\aging.db
+15:54:06 [INFO    ] monitor_agent — Database ready.
+15:54:07 [INFO    ] core.collector — Baseline captured: CPU=46.2% RAM=66.3% Disk=91.9%
+15:54:07 [INFO    ] core.collector — DataCollector started (interval=1s)
+15:54:08 [INFO    ] monitor_agent — Agent running (interval=1s).
+15:55:52 [INFO    ] monitor_agent — ============================================================
+15:55:52 [INFO    ] monitor_agent —   Software Aging Monitoring Agent
+15:55:52 [INFO    ] monitor_agent — ============================================================
+15:55:52 [INFO    ] database.db_manager — Database initialised at C:\Users\acer\Documents\softwareaginganalyser\aging.db
+15:55:52 [INFO    ] monitor_agent — Database ready.
+15:55:53 [INFO    ] core.collector — Baseline captured: CPU=50.5% RAM=65.5% Disk=92.0%
+15:55:53 [INFO    ] core.collector — DataCollector started (interval=1s)
+15:55:53 [INFO    ] monitor_agent — Agent running (interval=1s).
+09:28:30 [INFO    ] monitor_agent — ============================================================
+09:28:30 [INFO    ] monitor_agent —   Software Aging Monitoring Agent
+09:28:30 [INFO    ] monitor_agent — ============================================================
+09:28:31 [INFO    ] database.db_manager — Database initialised at C:\Users\acer\Documents\softwareaginganalyser\aging.db
+09:28:31 [INFO    ] monitor_agent — Database ready.
+09:28:32 [INFO    ] core.collector — Baseline captured: CPU=43.8% RAM=77.0% Disk=91.7%
+09:28:32 [INFO    ] core.collector — DataCollector started (interval=1s)
+09:28:33 [INFO    ] monitor_agent — Agent running (interval=1s).
+12:26:10 [INFO    ] monitor_agent — ============================================================
+12:26:10 [INFO    ] monitor_agent —   Software Aging Monitoring Agent
+12:26:10 [INFO    ] monitor_agent — ============================================================
+12:26:10 [INFO    ] database.db_manager — Database initialised at C:\Users\acer\Documents\softwareaginganalyser\aging.db
+12:26:10 [INFO    ] monitor_agent — Database ready.
+12:26:11 [INFO    ] core.collector — Baseline captured: CPU=31.8% RAM=76.1% Disk=91.9%
+12:26:11 [INFO    ] core.collector — DataCollector started (interval=1s)
+12:26:12 [INFO    ] monitor_agent — Agent running (interval=1s).
+12:29:26 [INFO    ] monitor_agent — ============================================================
+12:29:26 [INFO    ] monitor_agent —   Software Aging Monitoring Agent
+12:29:26 [INFO    ] monitor_agent — ============================================================
+12:29:26 [INFO    ] database.db_manager — Database initialised at C:\Users\acer\Documents\softwareaginganalyser\aging.db
+12:29:26 [INFO    ] monitor_agent — Database ready.
+12:29:27 [INFO    ] core.collector — Baseline captured: CPU=36.3% RAM=86.0% Disk=91.9%
+12:29:27 [INFO    ] core.collector — DataCollector started (interval=1s)
+12:29:28 [INFO    ] monitor_agent — Agent running (interval=1s).
+12:43:50 [INFO    ] monitor_agent — ============================================================
+12:43:50 [INFO    ] monitor_agent —   Software Aging Monitoring Agent
+12:43:50 [INFO    ] monitor_agent — ============================================================
+12:43:50 [INFO    ] database.db_manager — Database initialised at C:\Users\acer\Documents\softwareaginganalyser\aging.db
+12:43:50 [INFO    ] monitor_agent — Database ready.
+12:43:52 [INFO    ] core.collector — Baseline captured: CPU=30.5% RAM=88.2% Disk=91.8%
+12:43:52 [INFO    ] core.collector — DataCollector started (interval=1s)
+12:43:52 [INFO    ] monitor_agent — Agent running (interval=1s).
+09:44:47 [INFO    ] monitor_agent — ============================================================
+09:44:47 [INFO    ] monitor_agent —   Software Aging Monitoring Agent
+09:44:47 [INFO    ] monitor_agent — ============================================================
+09:44:47 [INFO    ] database.db_manager — Database initialised at C:\Users\acer\Documents\softwareaginganalyser\aging.db
+09:44:47 [INFO    ] monitor_agent — Database ready.
+09:44:48 [INFO    ] core.collector — Baseline captured: CPU=31.2% RAM=76.4% Disk=91.2%
+09:44:48 [INFO    ] core.collector — DataCollector started (interval=1s)
+09:44:48 [INFO    ] monitor_agent — Agent running (interval=1s).

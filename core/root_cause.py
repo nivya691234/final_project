@@ -11,11 +11,6 @@ import time
 from typing import Dict, List, Optional
 
 from config.settings import (
-    MEMORY_SLOPE_THRESHOLD,
-    CPU_SLOPE_THRESHOLD,
-    THREAD_SLOPE_THRESHOLD,
-    DISK_SLOPE_THRESHOLD,
-    NET_SLOPE_THRESHOLD,
     IGNORE_PROCESS_NAMES,
 )
 from core.analyzer import TrendAnalyzer
@@ -109,9 +104,10 @@ class RootCauseEngine:
                 continue
             pid       = 0  # lookup not critical for display
             detected  = []
+            thresholds = self.analyzer.get_process_thresholds(name)
 
             if trend["memory_leak"]:
-                sev    = _severity(trend["mem_slope"], MEMORY_SLOPE_THRESHOLD)
+                sev    = _severity(trend["mem_slope"], thresholds["memory"])
                 detail = (
                     f"Memory slope={trend['mem_slope']:.4f}%/sample "
                     f"(R²={trend['mem_r2']:.2f})"
@@ -125,7 +121,7 @@ class RootCauseEngine:
                 })
 
             if trend["cpu_runaway"]:
-                sev    = _severity(trend["cpu_slope"], CPU_SLOPE_THRESHOLD)
+                sev    = _severity(trend["cpu_slope"], thresholds["cpu"])
                 detail = (
                     f"CPU slope={trend['cpu_slope']:.4f}%/sample "
                     f"(R²={trend['cpu_r2']:.2f})"
@@ -139,7 +135,7 @@ class RootCauseEngine:
                 })
 
             if trend["thread_leak"]:
-                sev    = _severity(trend["thread_slope"], THREAD_SLOPE_THRESHOLD)
+                sev    = _severity(trend["thread_slope"], thresholds["threads"])
                 detail = (
                     f"Thread slope={trend['thread_slope']:.4f}/sample "
                     f"(R²={trend['thread_r2']:.2f})"
@@ -163,8 +159,10 @@ class RootCauseEngine:
         causes    = []
         now       = time.time()
 
+        thresholds = self.analyzer.get_system_thresholds()
+
         if sys_trend.get("disk_bottleneck"):
-            sev = _severity(sys_trend["disk_slope"], DISK_SLOPE_THRESHOLD)
+            sev = _severity(sys_trend["disk_slope"], thresholds["disk"])
             causes.append({
                 "pid":      0,
                 "name":     "system",
@@ -174,7 +172,7 @@ class RootCauseEngine:
             })
 
         if sys_trend.get("net_bottleneck"):
-            sev = _severity(sys_trend["net_slope"], NET_SLOPE_THRESHOLD)
+            sev = _severity(sys_trend["net_slope"], thresholds["net"])
             causes.append({
                 "pid":      0,
                 "name":     "system",

@@ -45,6 +45,7 @@ from config.settings import (
     NET_SLOPE_THRESHOLD,
     RSQUARED_THRESHOLD,
 )
+from core.thresholds import ThresholdLearner
 from database.db_manager import DatabaseManager
 
 logger = logging.getLogger(__name__)
@@ -59,6 +60,7 @@ class TrendAnalyzer:
     def __init__(self, db: DatabaseManager, window: int = TREND_WINDOW):
         self.db     = db
         self.window = window
+        self.thresholds = ThresholdLearner(db, window)
 
     # ── System-level trend ────────────────────────────────────────────────────
 
@@ -85,6 +87,12 @@ class TrendAnalyzer:
         net_sr  = sr("net_recv_rate")
         net_ss  = sr("net_send_rate")
         net_s   = (net_sr[0] + net_ss[0]) / 2
+
+        thresholds = self.thresholds.get_system_thresholds()
+        cpu_thresh = thresholds["cpu"]
+        ram_thresh = thresholds["ram"]
+        disk_thresh = thresholds["disk"]
+        net_thresh = thresholds["net"]
 
         # Aging rules: 1. At least ``window`` samples (configurable)
         has_50 = len(rows) >= self.window
@@ -126,24 +134,32 @@ class TrendAnalyzer:
             "disk_r2":      disk_r2,
             "net_slope":    net_s,
             # Symptom flags
-            "memory_leak":  (ram_s > MEMORY_SLOPE_THRESHOLD) and (ram_r2 >= RSQUARED_THRESHOLD) and mem_aging,
-            "cpu_runaway":  (cpu_s > CPU_SLOPE_THRESHOLD) and (cpu_r2 >= RSQUARED_THRESHOLD) and cpu_aging,
-            "disk_bottleneck":  (disk_s > DISK_SLOPE_THRESHOLD) and (disk_r2 >= RSQUARED_THRESHOLD) and disk_aging,
-            "net_bottleneck":   (net_s > NET_SLOPE_THRESHOLD) and net_aging,
+            "memory_leak":  (ram_s > ram_thresh) and (ram_r2 >= RSQUARED_THRESHOLD) and mem_aging,
+            "cpu_runaway":  (cpu_s > cpu_thresh) and (cpu_r2 >= RSQUARED_THRESHOLD) and cpu_aging,
+            "disk_bottleneck":  (disk_s > disk_thresh) and (disk_r2 >= RSQUARED_THRESHOLD) and disk_aging,
+            "net_bottleneck":   (net_s > net_thresh) and net_aging,
             # Overall degradation score (0-1 normalised)
-            "degradation_score": self._degradation_score(cpu_s, ram_s, disk_s),
+            "degradation_score": self._degradation_score(cpu_s, ram_s, disk_s, cpu_thresh, ram_thresh, disk_thresh),
         }
         logger.debug("System trend: %s", result)
         return result
 
-    def _degradation_score(self, cpu_s: float, ram_s: float, disk_s: float) -> float:
+    def _degradation_score(
+        self,
+        cpu_s: float,
+        ram_s: float,
+        disk_s: float,
+        cpu_thresh: float,
+        ram_thresh: float,
+        disk_thresh: float,
+    ) -> float:
         """
         Weighted composite degradation metric normalised to ~[0, 1].
         Higher = worse system health.
         """
-        w_cpu  = min(max(cpu_s  / CPU_SLOPE_THRESHOLD,  0), 1) * 0.4
-        w_ram  = min(max(ram_s  / MEMORY_SLOPE_THRESHOLD, 0), 1) * 0.45
-        w_disk = min(max(disk_s / DISK_SLOPE_THRESHOLD,  0), 1) * 0.15
+        w_cpu  = min(max(cpu_s  / max(cpu_thresh, 1e-9),  0), 1) * 0.4
+        w_ram  = min(max(ram_s  / max(ram_thresh, 1e-9), 0), 1) * 0.45
+        w_disk = min(max(disk_s / max(disk_thresh, 1e-9),  0), 1) * 0.15
         return round(w_cpu + w_ram + w_disk, 4)
 
     # ── Per-process trend ─────────────────────────────────────────────────────
@@ -167,6 +183,11 @@ class TrendAnalyzer:
         mem_s, mem_r2  = _slope_r2(t, m_vals)
         cpu_s, cpu_r2  = _slope_r2(t, c_vals)
         thr_s, thr_r2  = _slope_r2(t, t_vals)
+
+        thresholds = self.thresholds.get_process_thresholds(name)
+        mem_thresh = thresholds["memory"]
+        cpu_thresh = thresholds["cpu"]
+        thr_thresh = thresholds["threads"]
 
         # Aging rules: 1. At least ``window`` samples (configurable)
         has_50 = len(rows) >= self.window
@@ -200,10 +221,16 @@ class TrendAnalyzer:
             "thread_slope": thr_s,
             "thread_r2":    thr_r2,
             # Symptom flags
-            "memory_leak":  (mem_s > MEMORY_SLOPE_THRESHOLD) and (mem_r2 >= RSQUARED_THRESHOLD) and mem_aging,
-            "cpu_runaway":  (cpu_s > CPU_SLOPE_THRESHOLD) and (cpu_r2 >= RSQUARED_THRESHOLD) and cpu_aging,
-            "thread_leak":  (thr_s > THREAD_SLOPE_THRESHOLD) and (thr_r2 >= RSQUARED_THRESHOLD) and thr_aging,
+            "memory_leak":  (mem_s > mem_thresh) and (mem_r2 >= RSQUARED_THRESHOLD) and mem_aging,
+            "cpu_runaway":  (cpu_s > cpu_thresh) and (cpu_r2 >= RSQUARED_THRESHOLD) and cpu_aging,
+            "thread_leak":  (thr_s > thr_thresh) and (thr_r2 >= RSQUARED_THRESHOLD) and thr_aging,
         }
+
+    def get_system_thresholds(self) -> Dict[str, float]:
+        return self.thresholds.get_system_thresholds()
+
+    def get_process_thresholds(self, name: str) -> Dict[str, float]:
+        return self.thresholds.get_process_thresholds(name)
 
     def analyze_all_processes(self) -> List[Dict]:
         """Analyze every distinct process present in the DB."""

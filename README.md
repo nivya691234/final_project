@@ -106,12 +106,14 @@ All settings are in `config/settings.py`:
 SAMPLING_INTERVAL   = 1           # seconds between metrics snapshots
 TREND_WINDOW        = 10          # samples used for trend analysis
 
-# Demo‐Friendly Thresholds (detect aging in 15-30 seconds)
+# Adaptive Thresholds (enabled by default)
+# The analyzer learns slope thresholds from historical metric windows.
+# Static config values below remain minimum fallback values.
 MEMORY_SLOPE_THRESHOLD = 0.01     # % per sample
 CPU_SLOPE_THRESHOLD    = 0.10     # % per sample
 THREAD_SLOPE_THRESHOLD = 0.01     # threads per sample
 
-# Production Thresholds (only extreme aging)
+# Production Thresholds (only extreme aging — override if you want less sensitivity)
 # MEMORY_SLOPE_THRESHOLD = 0.15
 # CPU_SLOPE_THRESHOLD    = 0.35
 # THREAD_SLOPE_THRESHOLD = 0.06

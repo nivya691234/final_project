@@ -104,15 +104,45 @@ class RemediationEngine:
 
         if not target:
             return []
+        # Robust name matching: case-insensitive exact, without extension, substring,
+        # and executable path matching where available. This helps when the process
+        # name varies in casing or the caller omitted/adds '.exe'.
+        t = target.lower()
+        t_no_ext = t[:-4] if t.endswith('.exe') else t
 
         procs = []
-        for p in psutil.process_iter(["name"]):
+        for p in psutil.process_iter(["name", "exe", "cmdline"]):
             try:
-                if p.info["name"] == target:
+                name = (p.info.get("name") or "").lower()
+                exe = (p.info.get("exe") or "").lower()
+
+                # Exact match or extension-agnostic match
+                if name == t or name == t_no_ext:
+                    procs.append(p)
+                    continue
+
+                # Substring match (e.g., service names, truncated names)
+                if t in name or t_no_ext in name:
+                    procs.append(p)
+                    continue
+
+                # Executable path matches (endswith to allow full paths)
+                if exe and (exe.endswith(t) or exe.endswith(t_no_ext)):
+                    procs.append(p)
+                    continue
+
+                # Fallback: check command line entries for the token
+                cmd = " ".join(p.info.get("cmdline") or []).lower()
+                if t in cmd or t_no_ext in cmd:
                     procs.append(p)
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass
-        return procs
+
+        # Deduplicate by PID
+        unique = {}
+        for p in procs:
+            unique[p.pid] = p
+        return list(unique.values())
 
     def _parse_cores(self, cores_value: Optional[Iterable]) -> list[int]:
         if cores_value is None:

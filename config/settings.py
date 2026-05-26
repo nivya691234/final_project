@@ -20,14 +20,23 @@ ANALYSIS_EVERY_N    = 5           # run analysis after every N samples (~5 sec)
 TREND_WINDOW        = 10          # number of recent samples used for regression
 
 # ── Slope / trend thresholds ─────────────────────────────────────────────────
-# Demo‑friendly thresholds (low values make aging visible quickly).
-# In production, these can be raised for ``extreme only`` detection.
+# Base threshold values. When adaptive thresholds are enabled, the analyzer
+# learns thresholds from recent historical metric windows and uses these values
+# as a minimum fallback.
 MEMORY_SLOPE_THRESHOLD = 0.01     # % per sample → memory leak
 CPU_SLOPE_THRESHOLD    = 0.10     # % per sample → CPU runaway
 THREAD_SLOPE_THRESHOLD = 0.01     # threads per sample → thread leak
 DISK_SLOPE_THRESHOLD   = 0.12     # % per sample → disk bottleneck (extreme only)
 NET_SLOPE_THRESHOLD    = 200_000  # bytes per sample → network bottleneck (extreme only)
 RSQUARED_THRESHOLD     = 0.50     # minimum R² accuracy (0-1) for a trend to be considered valid
+
+# ── Adaptive/Automatic threshold learning ───────────────────────────────────
+ADAPTIVE_THRESHOLDS_ENABLED   = True
+ADAPTIVE_HISTORY_SAMPLES      = 120   # historical samples used to learn metric slope behavior
+ADAPTIVE_MIN_HISTORY_SAMPLES  = 20    # minimum data points needed to compute a learned threshold
+ADAPTIVE_PERCENTILE           = 90    # percentile of historical slopes used as the baseline
+ADAPTIVE_STD_MULTIPLIER       = 1.5   # additional multiplier on slope standard deviation
+ADAPTIVE_SCALE_FACTOR         = 1.2   # scale factor applied to the learned percentile value
 
 # ── Reliability / prediction ──────────────────────────────────────────────────
 FAILURE_THRESHOLD      = 0.75     # P(failure) level that triggers alert

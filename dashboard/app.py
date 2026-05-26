@@ -22,6 +22,7 @@ from config.settings import FLASK_HOST, FLASK_PORT, FLASK_DEBUG, IGNORE_PROCESS_
 from database.db_manager import DatabaseManager
 from core.remediation import RemediationEngine
 from core.llm_agent import LlmAgent
+from core.action_history import ActionHistorySummary
 from core.pid_registry import get_registered_pids, get_registered_process_names
 
 logger = logging.getLogger(__name__)
@@ -291,6 +292,68 @@ def api_pending_actions():
             r["params"] = {}
         filtered.append(r)
     return jsonify({"actions": filtered})
+
+
+@app.route("/api/actions/summary")
+def api_actions_summary():
+    """Get aggregated action summary (counts by type, status, severity)."""
+    db = _get_db()
+    hours = request.args.get("hours", 1, type=int)
+    summarizer = ActionHistorySummary(db)
+    summary = summarizer.get_summary(hours=hours)
+    return jsonify(summary)
+
+
+@app.route("/api/actions/history")
+def api_actions_history():
+    """Get recent action history with optional filters."""
+    db = _get_db()
+    limit = request.args.get("limit", 50, type=int)
+    status = request.args.get("status")
+    action = request.args.get("action")
+    summarizer = ActionHistorySummary(db)
+    actions = summarizer.get_recent_actions(limit=limit, status=status, action=action)
+    for a in actions:
+        a["ts_human"] = _fmt_ts(a.get("created_at", 0))
+        a["executed_ts_human"] = _fmt_ts(a.get("executed_at"))
+    return jsonify({"actions": actions})
+
+
+@app.route("/api/actions/failed")
+def api_actions_failed():
+    """Get failed actions for debugging."""
+    db = _get_db()
+    limit = request.args.get("limit", 20, type=int)
+    summarizer = ActionHistorySummary(db)
+    actions = summarizer.get_failed_actions(limit=limit)
+    for a in actions:
+        a["ts_human"] = _fmt_ts(a.get("created_at", 0))
+    return jsonify({"failed_actions": actions})
+
+
+@app.route("/api/actions/by-target")
+def api_actions_by_target():
+    """Rank targets (processes) by number of actions."""
+    db = _get_db()
+    limit = request.args.get("limit", 20, type=int)
+    summarizer = ActionHistorySummary(db)
+    targets = summarizer.get_actions_by_target(limit=limit)
+    return jsonify({"targets": targets})
+
+
+@app.route("/api/actions/success-rate")
+def api_actions_success_rate():
+    """Get success rate of executed actions."""
+    db = _get_db()
+    hours = request.args.get("hours", 1, type=int)
+    summarizer = ActionHistorySummary(db)
+    rate = summarizer.get_success_rate(hours=hours)
+    summary = summarizer.get_summary(hours=hours)
+    return jsonify({
+        "success_rate": round(rate, 4),
+        "total_actions": summary["total"],
+        "hours": hours
+    })
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

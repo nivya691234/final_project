@@ -1,1 +1,1 @@
-{"notifier_service": {"pid": 13836, "ts": 1776242620.0836103, "proc_name": "python.exe"}, "monitor_agent": {"pid": 3260, "ts": 1776242619.8118935, "proc_name": "python.exe"}, "dashboard_server": {"pid": 13508, "ts": 1776242621.417746, "proc_name": "python.exe"}}
+{"notifier_service": {"pid": 14252, "ts": 1779336888.5765476, "proc_name": "python.exe"}, "monitor_agent": {"pid": 4784, "ts": 1779336887.1994681, "proc_name": "python.exe"}, "dashboard_server": {"pid": 14236, "ts": 1779336897.7290409, "proc_name": "python.exe"}}
